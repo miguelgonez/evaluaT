@@ -115,8 +115,7 @@ class ChatService:
                 "content": message,
                 "created_at": datetime.now(timezone.utc),
                 "metadata": {
-                    "category": category,
-                    "relevant_docs_count": len(relevant_docs)
+                    "category": category or "general"
                 }
             }
             
@@ -132,8 +131,7 @@ class ChatService:
                 "created_at": datetime.now(timezone.utc),
                 "metadata": {
                     "model": "test-mode",
-                    "context_docs": [doc['metadata'] for doc in relevant_docs[:3]],
-                    "category": category
+                    "category": category or "general"
                 }
             }
             
