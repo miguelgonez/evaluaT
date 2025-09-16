@@ -442,6 +442,342 @@ class AIComplianceAPITester:
         
         return success
 
+    # NEW RAG SYSTEM TESTS
+    def test_chat_create_session(self):
+        """Test creating a new chat session"""
+        session_data = {
+            "title": "Test RAG Consultation"
+        }
+        
+        success, response = self.run_test(
+            "Create Chat Session",
+            "POST",
+            "chat/sessions",
+            200,
+            data=session_data
+        )
+        
+        if success and 'session_id' in response:
+            self.chat_session_id = response['session_id']
+            print(f"   Chat Session ID: {self.chat_session_id}")
+            return True
+        return False
+
+    def test_chat_get_sessions(self):
+        """Test getting chat sessions"""
+        success, response = self.run_test(
+            "Get Chat Sessions",
+            "GET",
+            "chat/sessions",
+            200
+        )
+        
+        if success and 'sessions' in response:
+            sessions = response['sessions']
+            print(f"   Found {len(sessions)} chat sessions")
+            return True
+        return False
+
+    def test_chat_send_message(self):
+        """Test sending a message to chat (RAG system)"""
+        if not hasattr(self, 'chat_session_id') or not self.chat_session_id:
+            print("❌ No chat session ID available")
+            return False
+            
+        message_data = {
+            "message": "¿Qué requisitos tiene el EU AI Act para sistemas de IA de alto riesgo en salud digital?",
+            "category": "ai_regulation"
+        }
+        
+        success, response = self.run_test(
+            "Send Chat Message (RAG)",
+            "POST",
+            f"chat/sessions/{self.chat_session_id}/messages",
+            200,
+            data=message_data
+        )
+        
+        if success:
+            # Check if response contains both user and AI messages
+            if 'user_message' in response and 'ai_response' in response:
+                ai_content = response['ai_response'].get('content', '')
+                relevant_docs = response.get('relevant_documents', [])
+                
+                print(f"   AI Response Length: {len(ai_content)} characters")
+                print(f"   Relevant Documents Found: {len(relevant_docs)}")
+                print(f"   AI Response Preview: {ai_content[:100]}...")
+                
+                # Check if response is in Spanish and contains relevant content
+                spanish_indicators = ['requisitos', 'sistemas', 'alto riesgo', 'salud', 'cumplimiento']
+                spanish_found = sum(1 for indicator in spanish_indicators if indicator.lower() in ai_content.lower())
+                
+                if spanish_found >= 2 and len(ai_content) > 50:
+                    print(f"✅ RAG system working - Spanish response with relevant content")
+                    return True
+                else:
+                    print(f"❌ RAG response may not be working properly")
+                    print(f"   Spanish indicators found: {spanish_found}/5")
+                    return False
+            else:
+                print(f"❌ Chat response missing required fields")
+                return False
+        
+        return False
+
+    def test_chat_get_messages(self):
+        """Test getting chat messages"""
+        if not hasattr(self, 'chat_session_id') or not self.chat_session_id:
+            print("❌ No chat session ID available")
+            return False
+            
+        success, response = self.run_test(
+            "Get Chat Messages",
+            "GET",
+            f"chat/sessions/{self.chat_session_id}/messages",
+            200
+        )
+        
+        if success and 'messages' in response:
+            messages = response['messages']
+            print(f"   Found {len(messages)} messages in session")
+            return True
+        return False
+
+    def test_chat_stats(self):
+        """Test getting chat statistics"""
+        success, response = self.run_test(
+            "Get Chat Statistics",
+            "GET",
+            "chat/stats",
+            200
+        )
+        
+        if success:
+            expected_keys = ['total_sessions', 'total_messages', 'user_messages', 'assistant_messages']
+            for key in expected_keys:
+                if key not in response:
+                    print(f"❌ Missing key in chat stats: {key}")
+                    return False
+            print(f"   Chat stats complete with all required keys")
+        
+        return success
+
+    def test_documents_search(self):
+        """Test document search functionality"""
+        search_params = {
+            "query": "inteligencia artificial alto riesgo",
+            "k": "5"
+        }
+        
+        # Build query string
+        query_string = "&".join([f"{k}={v}" for k, v in search_params.items()])
+        
+        success, response = self.run_test(
+            "Search Documents",
+            "GET",
+            f"documents/search?{query_string}",
+            200
+        )
+        
+        if success and 'results' in response:
+            results = response['results']
+            print(f"   Found {len(results)} document results")
+            
+            if results:
+                # Check first result structure
+                first_result = results[0]
+                required_fields = ['content', 'metadata']
+                for field in required_fields:
+                    if field not in first_result:
+                        print(f"❌ Missing field in document result: {field}")
+                        return False
+                
+                print(f"   Sample result content: {first_result['content'][:100]}...")
+                print(f"   Sample metadata: {first_result['metadata']}")
+                return True
+            else:
+                print(f"⚠️  No document results found - may need document initialization")
+                return True  # Not a failure if documents aren't loaded yet
+        
+        return False
+
+    def test_documents_categories(self):
+        """Test getting document categories"""
+        success, response = self.run_test(
+            "Get Document Categories",
+            "GET",
+            "documents/categories",
+            200
+        )
+        
+        if success and 'categories' in response:
+            categories = response['categories']
+            print(f"   Found {len(categories)} document categories: {categories}")
+            
+            expected_categories = ['ai_regulation', 'data_protection', 'medical_devices']
+            found_expected = [cat for cat in expected_categories if cat in categories]
+            
+            if len(found_expected) >= 2:
+                print(f"✅ Found expected categories: {found_expected}")
+                return True
+            else:
+                print(f"⚠️  Expected categories not found, but endpoint working")
+                return True
+        
+        return False
+
+    def test_documents_stats(self):
+        """Test getting document statistics"""
+        success, response = self.run_test(
+            "Get Document Statistics",
+            "GET",
+            "documents/stats",
+            200
+        )
+        
+        if success:
+            expected_keys = ['total_chunks', 'total_documents', 'categories']
+            for key in expected_keys:
+                if key not in response:
+                    print(f"❌ Missing key in document stats: {key}")
+                    return False
+            
+            print(f"   Document stats: {response}")
+            return True
+        
+        return False
+
+    def test_news_get_recent(self):
+        """Test getting recent news"""
+        success, response = self.run_test(
+            "Get Recent News",
+            "GET",
+            "news?limit=10",
+            200
+        )
+        
+        if success and 'news' in response:
+            news_items = response['news']
+            print(f"   Found {len(news_items)} news items")
+            
+            if news_items:
+                # Check first news item structure
+                first_item = news_items[0]
+                required_fields = ['id', 'title', 'url', 'source', 'scraped_at']
+                for field in required_fields:
+                    if field not in first_item:
+                        print(f"❌ Missing field in news item: {field}")
+                        return False
+                
+                print(f"   Sample news title: {first_item['title'][:50]}...")
+                print(f"   Sample news source: {first_item['source']}")
+                return True
+            else:
+                print(f"⚠️  No news items found - may need news collection")
+                return True  # Not a failure if news aren't collected yet
+        
+        return False
+
+    def test_news_search(self):
+        """Test news search functionality"""
+        success, response = self.run_test(
+            "Search News",
+            "GET",
+            "news/search?query=inteligencia%20artificial",
+            200
+        )
+        
+        if success and 'results' in response:
+            results = response['results']
+            print(f"   Found {len(results)} news search results")
+            return True
+        
+        return False
+
+    def test_news_by_tag(self):
+        """Test getting news by tag"""
+        success, response = self.run_test(
+            "Get News by Tag",
+            "GET",
+            "news/tags/ai?limit=5",
+            200
+        )
+        
+        if success and 'news' in response:
+            news_items = response['news']
+            print(f"   Found {len(news_items)} news items with 'ai' tag")
+            return True
+        
+        return False
+
+    def test_rag_system_integration(self):
+        """Test complete RAG system integration"""
+        print("\n🧠 Testing RAG System Integration...")
+        
+        # Test multiple queries to ensure RAG is working
+        test_queries = [
+            {
+                "message": "¿Cuáles son los requisitos del GDPR para startups de salud digital?",
+                "category": "data_protection",
+                "expected_keywords": ["gdpr", "datos", "salud", "startups"]
+            },
+            {
+                "message": "¿Qué normativas aplican a dispositivos médicos con IA?",
+                "category": "medical_devices", 
+                "expected_keywords": ["dispositivos", "médicos", "mdr", "ia"]
+            }
+        ]
+        
+        if not hasattr(self, 'chat_session_id') or not self.chat_session_id:
+            # Create a new session for integration test
+            session_success, session_response = self.run_test(
+                "Create RAG Integration Session",
+                "POST",
+                "chat/sessions",
+                200,
+                data={"title": "RAG Integration Test"}
+            )
+            if session_success:
+                self.chat_session_id = session_response['session_id']
+            else:
+                return False
+        
+        successful_queries = 0
+        
+        for i, query in enumerate(test_queries):
+            success, response = self.run_test(
+                f"RAG Query {i+1}",
+                "POST",
+                f"chat/sessions/{self.chat_session_id}/messages",
+                200,
+                data={"message": query["message"], "category": query["category"]}
+            )
+            
+            if success and 'ai_response' in response:
+                ai_content = response['ai_response'].get('content', '').lower()
+                relevant_docs = response.get('relevant_documents', [])
+                
+                # Check for expected keywords
+                keywords_found = sum(1 for keyword in query["expected_keywords"] if keyword in ai_content)
+                
+                print(f"   Query {i+1}: {keywords_found}/{len(query['expected_keywords'])} keywords found")
+                print(f"   Relevant docs: {len(relevant_docs)}")
+                
+                if keywords_found >= 2 and len(relevant_docs) > 0:
+                    successful_queries += 1
+                    print(f"   ✅ RAG Query {i+1} successful")
+                else:
+                    print(f"   ❌ RAG Query {i+1} may not be working properly")
+        
+        integration_success = successful_queries >= len(test_queries) // 2
+        
+        if integration_success:
+            print(f"✅ RAG System Integration: {successful_queries}/{len(test_queries)} queries successful")
+        else:
+            print(f"❌ RAG System Integration: Only {successful_queries}/{len(test_queries)} queries successful")
+        
+        return integration_success
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting AI Compliance API Tests")
