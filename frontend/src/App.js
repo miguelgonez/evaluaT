@@ -1276,7 +1276,7 @@ const TimelineComponent = () => {
       )}
     </div>
   );
-;
+};
 
 // Timeline Component
 const TimelineComponent = () => {
