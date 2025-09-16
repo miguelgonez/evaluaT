@@ -36,11 +36,20 @@ class DocumentManager:
         for path in [self.normativas_path, self.updates_path, self.knowledge_base_path]:
             path.mkdir(parents=True, exist_ok=True)
         
-        # Initialize ChromaDB
-        self.embeddings = OpenAIEmbeddings(
-            api_key=os.getenv('EMERGENT_LLM_KEY'),
-            base_url="https://api.emergent.sh/v1"
-        )
+        # Initialize ChromaDB with simpler embeddings for now
+        try:
+            from langchain_community.embeddings import HuggingFaceEmbeddings
+            self.embeddings = HuggingFaceEmbeddings(
+                model_name="sentence-transformers/all-MiniLM-L6-v2",
+                model_kwargs={'device': 'cpu'}
+            )
+            logger.info("Using HuggingFace embeddings for ChromaDB")
+        except Exception as e:
+            logger.warning(f"Failed to initialize HuggingFace embeddings: {str(e)}")
+            # Fallback to a simple embedding
+            from langchain_community.embeddings import FakeEmbeddings
+            self.embeddings = FakeEmbeddings(size=384)
+            logger.info("Using fake embeddings as fallback")
         
         self.vectorstore = Chroma(
             collection_name="compliance_documents",
