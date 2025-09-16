@@ -44,12 +44,21 @@ const AuthProvider = ({ children }) => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       // Validate token by making a request
-      axios.get(`${API}/dashboard/stats`)
+      axios.get(`${API}/health`)  // Using health endpoint instead of dashboard/stats
         .then(() => {
           const userData = JSON.parse(localStorage.getItem('user') || '{}');
-          setUser(userData);
+          if (userData && userData.id) {
+            setUser(userData);
+          } else {
+            // Token is valid but no user data, clear everything
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setToken(null);
+            delete axios.defaults.headers.common['Authorization'];
+          }
         })
-        .catch(() => {
+        .catch((error) => {
+          console.log('Token validation failed:', error);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           setToken(null);
