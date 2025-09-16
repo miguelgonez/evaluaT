@@ -180,10 +180,17 @@ class ChatService:
                 }
             )
             
-            # Return clean copies without MongoDB ObjectId
+            # Return clean copies without MongoDB ObjectId and with serializable datetimes
+            user_msg_clean = {k: v for k, v in user_msg.items()}
+            ai_msg_clean = {k: v for k, v in ai_msg.items()}
+            
+            # Convert datetime objects to ISO strings for JSON serialization
+            user_msg_clean["created_at"] = user_msg_clean["created_at"].isoformat()
+            ai_msg_clean["created_at"] = ai_msg_clean["created_at"].isoformat()
+            
             return {
-                "user_message": {k: v for k, v in user_msg.items()},
-                "ai_response": {k: v for k, v in ai_msg.items()},
+                "user_message": user_msg_clean,
+                "ai_response": ai_msg_clean,
                 "relevant_documents": relevant_docs[:3]
             }
             
