@@ -776,7 +776,7 @@ const NewsComponent = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTag, setSelectedTag] = useState('');
+  const [selectedTag, setSelectedTag] = useState('all');
 
   useEffect(() => {
     fetchNews();
