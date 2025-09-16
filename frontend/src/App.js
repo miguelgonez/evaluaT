@@ -703,7 +703,7 @@ const ChatComponent = () => {
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todas las categorías</SelectItem>
+                      <SelectItem value="all">Todas las categorías</SelectItem>
                       <SelectItem value="ai_regulation">EU AI Act</SelectItem>
                       <SelectItem value="data_protection">GDPR</SelectItem>
                       <SelectItem value="medical_devices">MDR</SelectItem>
