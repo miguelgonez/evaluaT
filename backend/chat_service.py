@@ -201,7 +201,7 @@ class ChatService:
                     "content": ai_response,
                     "created_at": current_time,
                     "metadata": {
-                        "model": "test-mode",
+                        "model": "gpt-4o-mini",
                         "category": category or "general"
                     }
                 },
