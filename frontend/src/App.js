@@ -1002,7 +1002,7 @@ const DocumentsComponent = () => {
         k: '10'
       });
       
-      if (selectedCategory) {
+      if (selectedCategory && selectedCategory !== 'all') {
         params.append('category', selectedCategory);
       }
 
