@@ -238,7 +238,7 @@ class AIComplianceAPITester:
         return False
 
     def test_create_low_risk_assessment(self):
-        """Test creating a low-risk assessment"""
+        """Test creating a low-risk assessment with Spanish recommendations"""
         low_risk_responses = {
             "company_description": "other",
             "medical_diagnosis": "no",
@@ -251,7 +251,7 @@ class AIComplianceAPITester:
         }
         
         success, response = self.run_test(
-            "Create Low Risk Assessment",
+            "Create Low Risk Assessment (Spanish)",
             "POST",
             "assessments",
             200,
@@ -262,17 +262,35 @@ class AIComplianceAPITester:
             risk_score = response.get('risk_score', 0)
             risk_level = response.get('risk_level', '')
             compliance_status = response.get('compliance_status', '')
+            recommendations = response.get('recommendations', [])
             
             print(f"   Risk Score: {risk_score}")
             print(f"   Risk Level: {risk_level}")
             print(f"   Compliance Status: {compliance_status}")
+            print(f"   Recommendations Count: {len(recommendations)}")
             
-            # Verify low risk assessment results
-            if risk_score <= 3.0 and risk_level in ['minimal', 'limited']:
-                print(f"✅ Low risk assessment correctly classified")
+            # Check if recommendations are in Spanish
+            spanish_keywords = ['Mantener', 'monitoreo', 'continuo', 'Establecer', 'proceso', 'revisión', 'periódica']
+            spanish_recommendations = [rec for rec in recommendations if any(keyword in rec for keyword in spanish_keywords)]
+            
+            print(f"   Spanish Recommendations Found: {len(spanish_recommendations)}")
+            if spanish_recommendations:
+                print(f"   Sample Spanish Recommendations:")
+                for i, rec in enumerate(spanish_recommendations[:3]):
+                    print(f"     {i+1}. {rec}")
+            
+            # Verify low risk assessment results AND Spanish recommendations
+            risk_correct = risk_score <= 3.0 and risk_level in ['minimal', 'limited']
+            spanish_correct = len(spanish_recommendations) > 0
+            
+            if risk_correct and spanish_correct:
+                print(f"✅ Low risk assessment correctly classified with Spanish recommendations")
                 return True
             else:
-                print(f"❌ Low risk assessment not properly classified")
+                if not risk_correct:
+                    print(f"❌ Low risk assessment not properly classified")
+                if not spanish_correct:
+                    print(f"❌ No Spanish recommendations found")
                 return False
         
         return False
