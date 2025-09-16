@@ -107,7 +107,7 @@ class ChatService:
             ai_response = f"Esta es una respuesta de prueba para la consulta: '{message}'. El sistema RAG encontró {len(relevant_docs)} documentos relevantes sobre {category or 'normativas generales'}."
             
             # Save user message
-            user_msg = {
+            user_msg_for_db = {
                 "id": str(uuid.uuid4()),
                 "session_id": session_id,
                 "user_id": user_id,
@@ -119,10 +119,10 @@ class ChatService:
                 }
             }
             
-            await self.db.chat_messages.insert_one(user_msg)
+            await self.db.chat_messages.insert_one(user_msg_for_db)
             
             # Save AI response
-            ai_msg = {
+            ai_msg_for_db = {
                 "id": str(uuid.uuid4()),
                 "session_id": session_id,
                 "user_id": user_id,
@@ -135,7 +135,7 @@ class ChatService:
                 }
             }
             
-            await self.db.chat_messages.insert_one(ai_msg)
+            await self.db.chat_messages.insert_one(ai_msg_for_db)
             
             # Update session
             await self.db.chat_sessions.update_one(
@@ -146,18 +146,34 @@ class ChatService:
                 }
             )
             
-            # Return clean copies without MongoDB ObjectId and with serializable datetimes
-            user_msg_clean = {k: v for k, v in user_msg.items()}
-            ai_msg_clean = {k: v for k, v in ai_msg.items()}
-            
-            # Convert datetime objects to ISO strings for JSON serialization
-            user_msg_clean["created_at"] = user_msg_clean["created_at"].isoformat()
-            ai_msg_clean["created_at"] = ai_msg_clean["created_at"].isoformat()
+            # Create completely separate response objects
+            current_time = datetime.now(timezone.utc).isoformat()
             
             return {
-                "user_message": user_msg_clean,
-                "ai_response": ai_msg_clean,
-                "relevant_documents": []  # Temporarily exclude to test
+                "user_message": {
+                    "id": user_msg_for_db["id"],
+                    "session_id": session_id,
+                    "user_id": user_id,
+                    "role": "user",
+                    "content": message,
+                    "created_at": current_time,
+                    "metadata": {
+                        "category": category or "general"
+                    }
+                },
+                "ai_response": {
+                    "id": ai_msg_for_db["id"],
+                    "session_id": session_id,
+                    "user_id": user_id,
+                    "role": "assistant",
+                    "content": ai_response,
+                    "created_at": current_time,
+                    "metadata": {
+                        "model": "test-mode",
+                        "category": category or "general"
+                    }
+                },
+                "relevant_documents": []
             }
             
         except Exception as e:
