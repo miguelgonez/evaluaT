@@ -1787,8 +1787,9 @@ function App() {
         <Routes>
           <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LandingPage />} />
           <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthComponent />} />
-          <Route path="/dashboard" element={user ? <MainDashboard /> : <Navigate to="/auth" />} />
-          {/* Removed separate assessment route - now handled within MainDashboard */}
+          <Route path="/dashboard" element={<MainDashboard />} />
+          {/* Force dashboard to show for demo */}
+          <Route path="/demo" element={<MainDashboard />} />
         </Routes>
       </BrowserRouter>
     </div>
