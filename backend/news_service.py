@@ -219,7 +219,7 @@ Responde en español y sé conciso pero informativo.
                     continue
                 
                 # Generate AI summary
-                ai_summary = await generate_news_summary(item)
+                ai_summary = await self.generate_news_summary(item)
                 
                 # Create news item
                 news_item = {
