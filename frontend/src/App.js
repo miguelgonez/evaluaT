@@ -1068,7 +1068,7 @@ const DocumentsComponent = () => {
               <SelectItem value="">Todas las categorías</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category} value={category}>
-                  {category.replace('_', ' ').toUpperCase()}
+                  {category.replace(/_/g, ' ').toUpperCase()}
                 </SelectItem>
               ))}
             </SelectContent>
