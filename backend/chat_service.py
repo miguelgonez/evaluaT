@@ -109,27 +109,26 @@ class ChatService:
                     context += f"\n{i}. **{doc['metadata'].get('title', 'Documento')}** (Categoría: {doc['metadata'].get('category', 'N/A')}):\n"
                     context += f"{doc['content'][:500]}...\n"
             
-            # Create enhanced prompt with context
+            # Create enhanced prompt with context (reduce cost by limiting context)
             enhanced_message = f"""
 **CONSULTA DEL USUARIO:**
 {message}
 
-{context}
+{context[:1000] if context else ""}
 
 **INSTRUCCIONES:**
-- Base tu respuesta en la documentación proporcionada
-- Si la documentación no contiene información suficiente, indícalo
-- Proporciona respuestas específicas para startups de salud digital e insurtech
-- Incluye pasos prácticos cuando sea posible
+- Responde de forma concisa y específica para startups de salud digital e insurtech
+- Si no tienes información suficiente en el contexto, indícalo
 - Menciona artículos específicos si son relevantes
+- Responde en español
 """
-            
-            # Initialize LLM chat for this session
+
+            # Initialize LLM chat for this session with cheaper model temporarily
             chat = LlmChat(
                 api_key=self.emergent_key,
                 session_id=session_id,
                 system_message=self.system_message
-            ).with_model("openai", "gpt-5")  # Using GPT-5 as requested
+            ).with_model("openai", "gpt-4o-mini")  # Using cheaper model for testing
             
             # Create user message
             user_message = UserMessage(text=enhanced_message)
