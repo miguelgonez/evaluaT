@@ -338,9 +338,10 @@ Responde en español y sé conciso pero informativo.
     async def search_news(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
         """Search news items"""
         try:
-            # Text search
+            # Text search and exclude MongoDB ObjectId field
             search_results = await self.db.news_items.find(
-                {"$text": {"$search": query}}
+                {"$text": {"$search": query}},
+                {"_id": 0}  # Exclude MongoDB ObjectId
             ).sort([
                 ("score", {"$meta": "textScore"}),
                 ("relevance_score", -1)
