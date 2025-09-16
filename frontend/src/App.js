@@ -726,20 +726,26 @@ const ChatComponent = () => {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center space-y-4">
+          <div className="flex-1 flex items-center justify-center p-6">
+            <div className="text-center space-y-4 max-w-md">
               <MessageCircle className="h-16 w-16 text-slate-300 mx-auto" />
               <h3 className="text-xl font-semibold text-slate-700">
                 Chat Inteligente con IA
               </h3>
-              <p className="text-slate-500 max-w-md">
-                Consulta normativas EU AI Act, GDPR, MDR y más con nuestro asistente especializado. 
-                Crea una nueva consulta para empezar.
+              <p className="text-slate-500">
+                Consulta normativas EU AI Act, GDPR, MDR y más con nuestro asistente especializado basado en documentación oficial.
               </p>
-              <Button onClick={createNewSession}>
+              <Button onClick={createNewSession} className="bg-blue-600 hover:bg-blue-700">
                 <Plus className="h-4 w-4 mr-2" />
                 Nueva Consulta
               </Button>
+              <div className="text-xs text-slate-400 mt-4">
+                <div className="flex items-center justify-center space-x-4">
+                  <span>✨ Sistema RAG</span>
+                  <span>📚 2,348+ documentos</span>
+                  <span>🧠 GPT-4o</span>
+                </div>
+              </div>
             </div>
           </div>
         )}
