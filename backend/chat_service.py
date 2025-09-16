@@ -75,7 +75,8 @@ class ChatService:
             raise ValueError("Chat session not found or access denied")
         
         messages = await self.db.chat_messages.find(
-            {"session_id": session_id}
+            {"session_id": session_id},
+            {"_id": 0}  # Exclude MongoDB ObjectId
         ).sort("created_at", 1).to_list(1000)
         
         return messages
