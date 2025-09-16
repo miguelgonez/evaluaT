@@ -41,34 +41,42 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('AuthProvider useEffect - Token:', token);
+    
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const userData = localStorage.getItem('user');
       
-      if (userData && userData !== 'undefined') {
+      console.log('User data from localStorage:', userData);
+      
+      if (userData && userData !== 'undefined' && userData !== 'null') {
         try {
           const parsedUser = JSON.parse(userData);
+          console.log('Parsed user:', parsedUser);
+          
           if (parsedUser && parsedUser.id) {
             setUser(parsedUser);
-            setLoading(false);
-            return;
+            console.log('User set successfully');
           }
         } catch (e) {
           console.error('Error parsing user data:', e);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setToken(null);
         }
+      } else {
+        console.log('No valid user data found');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setToken(null);
       }
-      
-      // If we reach here, clear invalid data
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      setToken(null);
-      delete axios.defaults.headers.common['Authorization'];
     }
     
     setLoading(false);
   }, [token]);
 
   const login = (userData, authToken) => {
+    console.log('Login called with:', userData, authToken);
     setUser(userData);
     setToken(authToken);
     localStorage.setItem('token', authToken);
@@ -83,6 +91,8 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
     delete axios.defaults.headers.common['Authorization'];
   };
+
+  console.log('AuthProvider render - User:', user, 'Loading:', loading);
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, loading }}>
