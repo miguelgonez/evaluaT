@@ -881,8 +881,8 @@ const NewsComponent = () => {
         <div className="flex gap-2 mb-6 flex-wrap">
           <Button
             size="sm"
-            variant={selectedTag === '' ? 'default' : 'outline'}
-            onClick={() => filterByTag('')}
+            variant={selectedTag === '' || selectedTag === 'all' ? 'default' : 'outline'}
+            onClick={() => filterByTag('all')}
           >
             Todas
           </Button>
