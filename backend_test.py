@@ -178,7 +178,7 @@ class AIComplianceAPITester:
         return False
 
     def test_create_high_risk_assessment(self):
-        """Test creating a high-risk assessment"""
+        """Test creating a high-risk assessment with Spanish recommendations"""
         high_risk_responses = {
             "company_description": "medical_diagnosis",
             "medical_diagnosis": "yes",
@@ -191,7 +191,7 @@ class AIComplianceAPITester:
         }
         
         success, response = self.run_test(
-            "Create High Risk Assessment",
+            "Create High Risk Assessment (Spanish)",
             "POST",
             "assessments",
             200,
@@ -203,18 +203,36 @@ class AIComplianceAPITester:
             risk_score = response.get('risk_score', 0)
             risk_level = response.get('risk_level', '')
             compliance_status = response.get('compliance_status', '')
+            recommendations = response.get('recommendations', [])
             
             print(f"   Assessment ID: {self.assessment_id}")
             print(f"   Risk Score: {risk_score}")
             print(f"   Risk Level: {risk_level}")
             print(f"   Compliance Status: {compliance_status}")
+            print(f"   Recommendations Count: {len(recommendations)}")
             
-            # Verify high risk assessment results
-            if risk_score >= 6.0 and risk_level in ['high', 'unacceptable']:
-                print(f"✅ High risk assessment correctly classified")
+            # Check if recommendations are in Spanish
+            spanish_keywords = ['Acción', 'inmediata', 'requerida', 'Implementar', 'Asegurar', 'sistema', 'gestión', 'validación clínica', 'GDPR']
+            spanish_recommendations = [rec for rec in recommendations if any(keyword in rec for keyword in spanish_keywords)]
+            
+            print(f"   Spanish Recommendations Found: {len(spanish_recommendations)}")
+            if spanish_recommendations:
+                print(f"   Sample Spanish Recommendations:")
+                for i, rec in enumerate(spanish_recommendations[:3]):
+                    print(f"     {i+1}. {rec}")
+            
+            # Verify high risk assessment results AND Spanish recommendations
+            risk_correct = risk_score >= 6.0 and risk_level in ['high', 'unacceptable']
+            spanish_correct = len(spanish_recommendations) > 0
+            
+            if risk_correct and spanish_correct:
+                print(f"✅ High risk assessment correctly classified with Spanish recommendations")
                 return True
             else:
-                print(f"❌ High risk assessment not properly classified")
+                if not risk_correct:
+                    print(f"❌ High risk assessment not properly classified")
+                if not spanish_correct:
+                    print(f"❌ No Spanish recommendations found")
                 return False
         
         return False
