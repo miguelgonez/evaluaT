@@ -103,40 +103,8 @@ class ChatService:
             # Search for relevant documents
             relevant_docs = await self.search_relevant_documents(message, category)
             
-            # Build context from relevant documents
-            context = ""
-            if relevant_docs:
-                context = "\n\n**DOCUMENTACIÓN RELEVANTE:**\n"
-                for i, doc in enumerate(relevant_docs[:3], 1):
-                    context += f"\n{i}. **{doc['metadata'].get('title', 'Documento')}** (Categoría: {doc['metadata'].get('category', 'N/A')}):\n"
-                    context += f"{doc['content'][:500]}...\n"
-            
-            # Create enhanced prompt with context (reduce cost by limiting context)
-            enhanced_message = f"""
-**CONSULTA DEL USUARIO:**
-{message}
-
-{context[:1000] if context else ""}
-
-**INSTRUCCIONES:**
-- Responde de forma concisa y específica para startups de salud digital e insurtech
-- Si no tienes información suficiente en el contexto, indícalo
-- Menciona artículos específicos si son relevantes
-- Responde en español
-"""
-
-            # Initialize LLM chat for this session with cheaper model temporarily
-            chat = LlmChat(
-                api_key=self.emergent_key,
-                session_id=session_id,
-                system_message=self.system_message
-            ).with_model("openai", "gpt-4o-mini")  # Using cheaper model for testing
-            
-            # Create user message
-            user_message = UserMessage(text=enhanced_message)
-            
-            # Get AI response
-            ai_response = await chat.send_message(user_message)
+            # For testing, use a simple response instead of LLM
+            ai_response = f"Esta es una respuesta de prueba para la consulta: '{message}'. El sistema RAG encontró {len(relevant_docs)} documentos relevantes sobre {category or 'normativas generales'}."
             
             # Save user message
             user_msg = {
@@ -163,7 +131,7 @@ class ChatService:
                 "content": ai_response,
                 "created_at": datetime.now(timezone.utc),
                 "metadata": {
-                    "model": "gpt-4o-mini",
+                    "model": "test-mode",
                     "context_docs": [doc['metadata'] for doc in relevant_docs[:3]],
                     "category": category
                 }
