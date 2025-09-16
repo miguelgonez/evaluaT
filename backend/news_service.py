@@ -320,8 +320,11 @@ Responde en español y sé conciso pero informativo.
             if category:
                 query["category"] = category
             
-            # Get news items
-            news = await self.db.news_items.find(query).sort([
+            # Get news items and exclude MongoDB ObjectId field
+            news = await self.db.news_items.find(
+                query, 
+                {"_id": 0}  # Exclude MongoDB ObjectId
+            ).sort([
                 ("relevance_score", -1),
                 ("scraped_at", -1)
             ]).limit(limit).to_list(limit)
