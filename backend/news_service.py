@@ -357,7 +357,8 @@ Responde en español y sé conciso pero informativo.
         """Get news items by tags"""
         try:
             news = await self.db.news_items.find(
-                {"tags": {"$in": tags}}
+                {"tags": {"$in": tags}},
+                {"_id": 0}  # Exclude MongoDB ObjectId
             ).sort([
                 ("relevance_score", -1),
                 ("scraped_at", -1)
