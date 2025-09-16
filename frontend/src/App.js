@@ -812,7 +812,7 @@ const NewsComponent = () => {
 
   const filterByTag = async (tag) => {
     setSelectedTag(tag);
-    if (!tag) {
+    if (!tag || tag === 'all') {
       fetchNews();
       return;
     }
