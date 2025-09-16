@@ -585,7 +585,7 @@ const ChatComponent = () => {
     try {
       const response = await axios.post(`${API}/chat/sessions/${currentSession}/messages`, {
         message: newMessage,
-        category: category || null
+        category: category && category !== 'all' ? category : null
       });
 
       setMessages(prev => [...prev, response.data.user_message, response.data.ai_response]);
