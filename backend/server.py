@@ -140,28 +140,58 @@ def generate_recommendations(responses: Dict[str, Any], risk_level: str) -> List
     recommendations = []
     
     if risk_level == "unacceptable":
-        recommendations.append("Immediate action required: Some AI systems may be prohibited under EU AI Act")
-        recommendations.append("Conduct legal review with AI regulation specialist")
-        recommendations.append("Consider alternative AI approaches that comply with regulations")
+        recommendations.append("Acción inmediata requerida: Algunos sistemas de IA pueden estar prohibidos bajo el EU AI Act")
+        recommendations.append("Realizar revisión legal con especialista en regulación de IA")
+        recommendations.append("Considerar enfoques alternativos de IA que cumplan con las regulaciones")
     
     if risk_level in ["high", "unacceptable"]:
-        recommendations.append("Implement conformity assessment procedures")
-        recommendations.append("Establish quality management system")
-        recommendations.append("Ensure human oversight mechanisms")
-        recommendations.append("Implement risk management system")
-        recommendations.append("Maintain detailed documentation and logs")
+        recommendations.append("Implementar procedimientos de evaluación de conformidad")
+        recommendations.append("Establecer sistema de gestión de calidad")
+        recommendations.append("Asegurar mecanismos de supervisión humana")
+        recommendations.append("Implementar sistema de gestión de riesgos")
+        recommendations.append("Mantener documentación detallada y registros")
     
     if "medical_diagnosis" in responses and responses["medical_diagnosis"] == "yes":
-        recommendations.append("Ensure clinical validation of medical AI systems")
-        recommendations.append("Implement proper medical device regulations compliance")
+        recommendations.append("Asegurar validación clínica de sistemas de IA médica")
+        recommendations.append("Implementar cumplimiento de regulaciones de dispositivos médicos")
     
-    if "data_processing" in responses and responses["data_processing"] == "yes":
-        recommendations.append("Ensure GDPR compliance for personal data processing")
-        recommendations.append("Implement data minimization principles")
+    if "data_processing" in responses and responses["data_processing"] in ["sensitive", "personal"]:
+        recommendations.append("Asegurar cumplimiento del GDPR para procesamiento de datos personales")
+        recommendations.append("Implementar principios de minimización de datos")
     
     if "automated_decision_making" in responses and responses["automated_decision_making"] == "yes":
-        recommendations.append("Provide clear information about automated decision-making")
-        recommendations.append("Implement right to explanation mechanisms")
+        recommendations.append("Proporcionar información clara sobre toma de decisiones automatizada")
+        recommendations.append("Implementar mecanismos de derecho a explicación")
+    
+    if "transparency" in responses and responses["transparency"] in ["none", "minimal"]:
+        recommendations.append("Mejorar transparencia informando a usuarios sobre el uso de IA")
+        recommendations.append("Desarrollar políticas claras de comunicación sobre sistemas de IA")
+    
+    if "human_oversight" in responses and responses["human_oversight"] in ["none", "exception"]:
+        recommendations.append("Establecer supervisión humana continua o periódica")
+        recommendations.append("Capacitar personal para supervisión efectiva de sistemas de IA")
+    
+    if "biometric_identification" in responses and responses["biometric_identification"] == "yes":
+        recommendations.append("Evaluar necesidad legal y proporcionalidad de identificación biométrica")
+        recommendations.append("Implementar salvaguardas adicionales para datos biométricos")
+    
+    if "emotion_recognition" in responses and responses["emotion_recognition"] == "yes":
+        recommendations.append("Revisar bases legales para reconocimiento de emociones")
+        recommendations.append("Considerar alternativas menos invasivas")
+    
+    # Recomendaciones generales por tipo de empresa
+    if any("medical" in str(v) or "diagnosis" in str(v) for v in responses.values()):
+        recommendations.append("Consultar con autoridades sanitarias sobre requisitos específicos")
+        recommendations.append("Establecer procesos de validación clínica continua")
+    
+    if any("insurance" in str(v) or "risk_assessment" in str(v) for v in responses.values()):
+        recommendations.append("Revisar políticas de no discriminación en evaluación de riesgos")
+        recommendations.append("Asegurar transparencia en procesos de suscripción automática")
+    
+    # Recomendaciones adicionales basadas en nivel de riesgo
+    if risk_level in ["limited", "minimal"]:
+        recommendations.append("Mantener monitoreo continuo del sistema para detectar cambios en el riesgo")
+        recommendations.append("Establecer proceso de revisión periódica del cumplimiento")
     
     return recommendations
 
