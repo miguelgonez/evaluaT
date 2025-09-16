@@ -205,7 +205,7 @@ class ChatService:
                         "category": category or "general"
                     }
                 },
-                "relevant_documents": []
+                "relevant_documents": relevant_docs[:3]
             }
             
         except Exception as e:
