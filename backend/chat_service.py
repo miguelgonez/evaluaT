@@ -159,7 +159,7 @@ class ChatService:
             return {
                 "user_message": user_msg_clean,
                 "ai_response": ai_msg_clean,
-                "relevant_documents": relevant_docs[:3]
+                "relevant_documents": []  # Temporarily exclude to test
             }
             
         except Exception as e:
