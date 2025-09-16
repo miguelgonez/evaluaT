@@ -163,7 +163,7 @@ class ChatService:
                 "content": ai_response,
                 "created_at": datetime.now(timezone.utc),
                 "metadata": {
-                    "model": "gpt-5",
+                    "model": "gpt-4o-mini",
                     "context_docs": [doc['metadata'] for doc in relevant_docs[:3]],
                     "category": category
                 }
@@ -180,9 +180,10 @@ class ChatService:
                 }
             )
             
+            # Return clean copies without MongoDB ObjectId
             return {
-                "user_message": user_msg,
-                "ai_response": ai_msg,
+                "user_message": {k: v for k, v in user_msg.items()},
+                "ai_response": {k: v for k, v in ai_msg.items()},
                 "relevant_documents": relevant_docs[:3]
             }
             
