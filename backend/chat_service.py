@@ -162,7 +162,7 @@ class ChatService:
                 "content": ai_response,
                 "created_at": datetime.now(timezone.utc),
                 "metadata": {
-                    "model": "test-mode",
+                    "model": "gpt-4o-mini",
                     "category": category or "general"
                 }
             }
