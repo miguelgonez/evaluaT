@@ -43,31 +43,29 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // Validate token by making a request
-      axios.get(`${API}/health`)  // Using health endpoint instead of dashboard/stats
-        .then(() => {
-          const userData = JSON.parse(localStorage.getItem('user') || '{}');
-          if (userData && userData.id) {
-            setUser(userData);
-          } else {
-            // Token is valid but no user data, clear everything
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            setToken(null);
-            delete axios.defaults.headers.common['Authorization'];
+      const userData = localStorage.getItem('user');
+      
+      if (userData && userData !== 'undefined') {
+        try {
+          const parsedUser = JSON.parse(userData);
+          if (parsedUser && parsedUser.id) {
+            setUser(parsedUser);
+            setLoading(false);
+            return;
           }
-        })
-        .catch((error) => {
-          console.log('Token validation failed:', error);
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          setToken(null);
-          delete axios.defaults.headers.common['Authorization'];
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
+        } catch (e) {
+          console.error('Error parsing user data:', e);
+        }
+      }
+      
+      // If we reach here, clear invalid data
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setToken(null);
+      delete axios.defaults.headers.common['Authorization'];
     }
+    
+    setLoading(false);
   }, [token]);
 
   const login = (userData, authToken) => {
