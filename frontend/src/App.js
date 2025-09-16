@@ -966,7 +966,7 @@ const DocumentsComponent = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
