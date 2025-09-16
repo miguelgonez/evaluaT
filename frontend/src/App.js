@@ -1616,7 +1616,7 @@ const MainDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid md:grid-cols-4 gap-4">
+                  <div className="grid md:grid-cols-5 gap-4">
                     <Button onClick={() => setActiveTab('assessment')} className="h-20 flex-col">
                       <FileText className="h-6 w-6 mb-2" />
                       Nueva Evaluación
@@ -1632,6 +1632,10 @@ const MainDashboard = () => {
                     <Button onClick={() => setActiveTab('docs')} variant="outline" className="h-20 flex-col">
                       <BookOpen className="h-6 w-6 mb-2" />
                       Documentos
+                    </Button>
+                    <Button onClick={() => setActiveTab('timeline')} variant="outline" className="h-20 flex-col">
+                      <Clock className="h-6 w-6 mb-2" />
+                      Cronograma
                     </Button>
                   </div>
                 </CardContent>
