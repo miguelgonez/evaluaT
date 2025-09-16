@@ -441,7 +441,7 @@ const AuthComponent = () => {
                   <Label htmlFor="company_type">Tipo de Empresa</Label>
                   <Select value={formData.company_type} onValueChange={(value) => setFormData({...formData, company_type: value})}>
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Seleccionar tipo de empresa" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="digital_health">Salud Digital</SelectItem>
