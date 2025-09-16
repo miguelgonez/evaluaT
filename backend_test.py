@@ -471,6 +471,8 @@ class AIComplianceAPITester:
             print("❌ High risk assessment creation failed")
             
         self.test_create_low_risk_assessment()
+        self.test_medical_diagnosis_spanish()
+        self.test_sensitive_data_spanish()
         self.test_get_specific_assessment()
         self.test_generate_report()
         
