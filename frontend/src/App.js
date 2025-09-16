@@ -1756,6 +1756,9 @@ const MainDashboard = () => {
       case 'docs':
         return <DocumentsComponent />;
         
+      case 'timeline':
+        return <TimelineComponent />;
+        
       default:
         return <div>Contenido no encontrado</div>;
     }
