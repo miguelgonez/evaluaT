@@ -14,6 +14,11 @@ import hashlib
 import jwt
 from passlib.context import CryptContext
 
+# Import our new services
+from document_manager import document_manager, initialize_documents, start_scheduler
+from chat_service import ChatService
+from news_service import NewsService, start_news_scheduler
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
@@ -31,6 +36,10 @@ ALGORITHM = "HS256"
 # Create the main app
 app = FastAPI(title="AI Compliance SaaS", version="1.0.0")
 api_router = APIRouter(prefix="/api")
+
+# Initialize services
+chat_service = ChatService(client)
+news_service = NewsService(client)
 
 # Models
 class User(BaseModel):
@@ -72,6 +81,14 @@ class ComplianceReport(BaseModel):
     user_id: str
     report_data: Dict[str, Any]
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Chat models
+class ChatMessageCreate(BaseModel):
+    message: str
+    category: Optional[str] = None
+
+class ChatSessionCreate(BaseModel):
+    title: Optional[str] = None
 
 # Helper functions
 def verify_password(plain_password, hashed_password):
@@ -317,6 +334,98 @@ async def generate_report(assessment_id: str, current_user: User = Depends(get_c
     await db.reports.insert_one(report.dict())
     return {"report_id": report.id, "report_data": report_data}
 
+# Chat endpoints
+@api_router.post("/chat/sessions")
+async def create_chat_session(session_data: ChatSessionCreate, current_user: User = Depends(get_current_user)):
+    session_id = await chat_service.create_chat_session(current_user.id, session_data.title)
+    return {"session_id": session_id}
+
+@api_router.get("/chat/sessions")
+async def get_chat_sessions(current_user: User = Depends(get_current_user)):
+    sessions = await chat_service.get_chat_sessions(current_user.id)
+    return {"sessions": sessions}
+
+@api_router.get("/chat/sessions/{session_id}/messages")
+async def get_chat_messages(session_id: str, current_user: User = Depends(get_current_user)):
+    messages = await chat_service.get_chat_messages(session_id, current_user.id)
+    return {"messages": messages}
+
+@api_router.post("/chat/sessions/{session_id}/messages")
+async def send_chat_message(session_id: str, message_data: ChatMessageCreate, current_user: User = Depends(get_current_user)):
+    try:
+        response = await chat_service.generate_response(
+            session_id=session_id,
+            user_id=current_user.id,
+            message=message_data.message,
+            category=message_data.category
+        )
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@api_router.delete("/chat/sessions/{session_id}")
+async def delete_chat_session(session_id: str, current_user: User = Depends(get_current_user)):
+    try:
+        await chat_service.delete_chat_session(session_id, current_user.id)
+        return {"message": "Session deleted successfully"}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@api_router.get("/chat/stats")
+async def get_chat_stats(current_user: User = Depends(get_current_user)):
+    stats = await chat_service.get_chat_statistics(current_user.id)
+    return stats
+
+# Document endpoints
+@api_router.get("/documents/search")
+async def search_documents(query: str, category: Optional[str] = None, k: int = 5):
+    results = document_manager.search_documents(query, k=k, category_filter=category)
+    return {"results": results}
+
+@api_router.get("/documents/categories")
+async def get_document_categories():
+    categories = document_manager.get_document_categories()
+    return {"categories": categories}
+
+@api_router.get("/documents/stats")
+async def get_document_stats():
+    stats = document_manager.get_document_stats()
+    return stats
+
+@api_router.post("/documents/refresh")
+async def refresh_documents():
+    """Manually trigger document refresh"""
+    try:
+        await document_manager.update_documents()
+        return {"message": "Document refresh completed"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error refreshing documents: {str(e)}")
+
+# News endpoints
+@api_router.get("/news")
+async def get_recent_news(limit: int = 20, category: Optional[str] = None, days: int = 30):
+    news = await news_service.get_recent_news(limit=limit, category=category, days=days)
+    return {"news": news}
+
+@api_router.get("/news/search")
+async def search_news(query: str, limit: int = 10):
+    results = await news_service.search_news(query, limit=limit)
+    return {"results": results}
+
+@api_router.get("/news/tags/{tag}")
+async def get_news_by_tag(tag: str, limit: int = 10):
+    news = await news_service.get_news_by_tags([tag], limit=limit)
+    return {"news": news}
+
+@api_router.post("/news/refresh")
+async def refresh_news():
+    """Manually trigger news collection"""
+    try:
+        await news_service.collect_all_news()
+        return {"message": "News collection completed"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error collecting news: {str(e)}")
+
 # Basic endpoints
 @api_router.get("/")
 async def root():
@@ -343,6 +452,31 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on startup"""
+    logger.info("Starting AI Compliance SaaS...")
+    
+    # Initialize documents
+    await initialize_documents()
+    
+    # Start document update scheduler
+    start_scheduler()
+    
+    # Start news update scheduler
+    start_news_scheduler()
+    
+    # Create database indexes
+    try:
+        await db.news_items.create_index([("title", "text"), ("summary", "text")])
+        await db.chat_messages.create_index([("session_id", 1), ("created_at", 1)])
+        await db.chat_sessions.create_index([("user_id", 1), ("updated_at", -1)])
+        logger.info("Database indexes created")
+    except Exception as e:
+        logger.warning(f"Error creating indexes: {str(e)}")
+    
+    logger.info("AI Compliance SaaS initialized successfully")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

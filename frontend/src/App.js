@@ -15,9 +15,11 @@ import { Alert, AlertDescription } from './components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select';
 import { RadioGroup, RadioGroupItem } from './components/ui/radio-group';
 import { Separator } from './components/ui/separator';
+import { Textarea } from './components/ui/textarea';
+import { ScrollArea } from './components/ui/scroll-area';
 
 // Icons
-import { Shield, Users, FileText, BarChart3, CheckCircle, AlertTriangle, XCircle, Menu, X, ArrowRight, Zap, Globe, Lock, Target, TrendingUp, Award } from 'lucide-react';
+import { Shield, Users, FileText, BarChart3, CheckCircle, AlertTriangle, XCircle, Menu, X, ArrowRight, Zap, Globe, Lock, Target, TrendingUp, Award, MessageCircle, Newspaper, BookOpen, Search, Send, Trash2, Plus, FileSearch, Tag, Calendar } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -246,11 +248,11 @@ const LandingPage = () => {
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="bg-green-100 p-3 rounded-lg w-fit">
-                  <BarChart3 className="h-6 w-6 text-green-600" />
+                  <MessageCircle className="h-6 w-6 text-green-600" />
                 </div>
-                <CardTitle>Dashboard de Métricas</CardTitle>
+                <CardTitle>Chat Inteligente RAG</CardTitle>
                 <CardDescription>
-                  Visualiza tu estado de cumplimiento con métricas en tiempo real y indicadores de progreso
+                  Consulta normativas con IA avanzada. Sistema RAG con acceso a EU AI Act, GDPR, MDR y más regulaciones
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -258,11 +260,11 @@ const LandingPage = () => {
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="bg-purple-100 p-3 rounded-lg w-fit">
-                  <Target className="h-6 w-6 text-purple-600" />
+                  <Newspaper className="h-6 w-6 text-purple-600" />
                 </div>
-                <CardTitle>Recomendaciones Personalizadas</CardTitle>
+                <CardTitle>Noticias Normativas</CardTitle>
                 <CardDescription>
-                  Recibe sugerencias específicas para mejorar el cumplimiento basadas en tu perfil de riesgo
+                  Actualizaciones automáticas de cambios normativos de EUR-Lex, BOE y fuentes oficiales
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -270,11 +272,11 @@ const LandingPage = () => {
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="bg-orange-100 p-3 rounded-lg w-fit">
-                  <Award className="h-6 w-6 text-orange-600" />
+                  <BookOpen className="h-6 w-6 text-orange-600" />
                 </div>
-                <CardTitle>Reportes Profesionales</CardTitle>
+                <CardTitle>Base de Conocimiento</CardTitle>
                 <CardDescription>
-                  Genera reportes detallados listos para auditorías y revisiones regulatorias
+                  Acceso completo a documentación oficial: EU AI Act, MDR, GDPR, DGA, LGS y más normativas
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -282,11 +284,11 @@ const LandingPage = () => {
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="bg-teal-100 p-3 rounded-lg w-fit">
-                  <TrendingUp className="h-6 w-6 text-teal-600" />
+                  <BarChart3 className="h-6 w-6 text-teal-600" />
                 </div>
-                <CardTitle>Seguimiento Continuo</CardTitle>
+                <CardTitle>Dashboard Avanzado</CardTitle>
                 <CardDescription>
-                  Monitorea cambios en el cumplimiento y mantente actualizado con nuevas regulaciones
+                  Métricas de cumplimiento, progreso de evaluaciones y alertas de cambios normativos
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -294,11 +296,11 @@ const LandingPage = () => {
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="bg-red-100 p-3 rounded-lg w-fit">
-                  <Lock className="h-6 w-6 text-red-600" />
+                  <Target className="h-6 w-6 text-red-600" />
                 </div>
-                <CardTitle>Seguridad Garantizada</CardTitle>
+                <CardTitle>Recomendaciones IA</CardTitle>
                 <CardDescription>
-                  Protección de datos empresariales con estándares de seguridad bancaria
+                  Sugerencias personalizadas generadas por IA basadas en tu perfil de riesgo y cambios normativos
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -469,16 +471,749 @@ const AuthComponent = () => {
   );
 };
 
-// Dashboard Component
-const Dashboard = () => {
+// Sidebar Component
+const Sidebar = ({ activeTab, setActiveTab }) => {
+  const menuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+    { id: 'assessment', label: 'Autoevaluación', icon: FileText },
+    { id: 'chat', label: 'Chat Inteligente', icon: MessageCircle },
+    { id: 'news', label: 'Noticias', icon: Newspaper },
+    { id: 'docs', label: 'Documentos', icon: BookOpen }
+  ];
+
+  return (
+    <div className="w-64 bg-white border-r border-slate-200 h-full">
+      <div className="p-6">
+        <div className="flex items-center space-x-3 mb-8">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
+            <Shield className="h-6 w-6 text-white" />
+          </div>
+          <span className="text-xl font-bold">AI Compliance Pro</span>
+        </div>
+        
+        <nav className="space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                  activeTab === item.id 
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                    : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="font-medium">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+    </div>
+  );
+};
+
+// Chat Component
+const ChatComponent = () => {
+  const { user } = useAuth();
+  const [sessions, setSessions] = useState([]);
+  const [currentSession, setCurrentSession] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [category, setCategory] = useState('');
+
+  useEffect(() => {
+    fetchSessions();
+  }, []);
+
+  const fetchSessions = async () => {
+    try {
+      const response = await axios.get(`${API}/chat/sessions`);
+      setSessions(response.data.sessions);
+    } catch (error) {
+      console.error('Error fetching sessions:', error);
+    }
+  };
+
+  const createNewSession = async () => {
+    try {
+      const response = await axios.post(`${API}/chat/sessions`, {
+        title: "Nueva Consulta"
+      });
+      await fetchSessions();
+      setCurrentSession(response.data.session_id);
+      setMessages([]);
+    } catch (error) {
+      console.error('Error creating session:', error);
+    }
+  };
+
+  const loadSession = async (sessionId) => {
+    try {
+      setCurrentSession(sessionId);
+      const response = await axios.get(`${API}/chat/sessions/${sessionId}/messages`);
+      setMessages(response.data.messages);
+    } catch (error) {
+      console.error('Error loading session:', error);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage.trim() || !currentSession) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.post(`${API}/chat/sessions/${currentSession}/messages`, {
+        message: newMessage,
+        category: category || null
+      });
+
+      setMessages(prev => [...prev, response.data.user_message, response.data.ai_response]);
+      setNewMessage('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteSession = async (sessionId) => {
+    try {
+      await axios.delete(`${API}/chat/sessions/${sessionId}`);
+      await fetchSessions();
+      if (currentSession === sessionId) {
+        setCurrentSession(null);
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error('Error deleting session:', error);
+    }
+  };
+
+  return (
+    <div className="flex h-full">
+      {/* Sessions Sidebar */}
+      <div className="w-80 bg-slate-50 border-r border-slate-200 flex flex-col">
+        <div className="p-4 border-b border-slate-200">
+          <Button onClick={createNewSession} className="w-full">
+            <Plus className="h-4 w-4 mr-2" />
+            Nueva Consulta
+          </Button>
+        </div>
+        
+        <ScrollArea className="flex-1 p-4">
+          <div className="space-y-2">
+            {sessions.map((session) => (
+              <div
+                key={session.id}
+                className={`p-3 rounded-lg cursor-pointer transition-colors group ${
+                  currentSession === session.id 
+                    ? 'bg-blue-50 border border-blue-200' 
+                    : 'bg-white hover:bg-slate-50 border border-slate-200'
+                }`}
+                onClick={() => loadSession(session.id)}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm text-slate-900 truncate">
+                      {session.title}
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {new Date(session.updated_at).toLocaleDateString('es-ES')}
+                    </p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteSession(session.id);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
+
+      {/* Chat Area */}
+      <div className="flex-1 flex flex-col">
+        {currentSession ? (
+          <>
+            {/* Messages */}
+            <ScrollArea className="flex-1 p-6">
+              <div className="space-y-4 max-w-4xl mx-auto">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-3xl p-4 rounded-lg ${
+                        message.role === 'user'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-100 text-slate-900'
+                      }`}
+                    >
+                      <div className="text-sm font-medium mb-2">
+                        {message.role === 'user' ? 'Tú' : 'AI Compliance Assistant'}
+                      </div>
+                      <div className="whitespace-pre-wrap">{message.content}</div>
+                      {message.metadata?.context_docs && (
+                        <div className="mt-3 pt-3 border-t border-slate-200/20">
+                          <div className="text-xs opacity-75">
+                            Fuentes consultadas: {message.metadata.context_docs.length} documentos
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+
+            {/* Input Area */}
+            <div className="border-t border-slate-200 p-6">
+              <div className="max-w-4xl mx-auto">
+                <div className="mb-4">
+                  <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Seleccionar categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">Todas las categorías</SelectItem>
+                      <SelectItem value="ai_regulation">EU AI Act</SelectItem>
+                      <SelectItem value="data_protection">GDPR</SelectItem>
+                      <SelectItem value="medical_devices">MDR</SelectItem>
+                      <SelectItem value="data_governance">DGA</SelectItem>
+                      <SelectItem value="health_law">Ley General de Sanidad</SelectItem>
+                      <SelectItem value="insurance_law">Ley de Seguros</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="flex gap-4">
+                  <Textarea
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Pregunta sobre normativas, cumplimiento, EU AI Act, GDPR..."
+                    className="flex-1 min-h-[60px]"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                      }
+                    }}
+                  />
+                  <Button
+                    onClick={sendMessage}
+                    disabled={loading || !newMessage.trim()}
+                    size="lg"
+                  >
+                    {loading ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center space-y-4">
+              <MessageCircle className="h-16 w-16 text-slate-300 mx-auto" />
+              <h3 className="text-xl font-semibold text-slate-700">
+                Chat Inteligente con IA
+              </h3>
+              <p className="text-slate-500 max-w-md">
+                Consulta normativas EU AI Act, GDPR, MDR y más con nuestro asistente especializado. 
+                Crea una nueva consulta para empezar.
+              </p>
+              <Button onClick={createNewSession}>
+                <Plus className="h-4 w-4 mr-2" />
+                Nueva Consulta
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// News Component
+const NewsComponent = () => {
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTag, setSelectedTag] = useState('');
+
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  const fetchNews = async () => {
+    try {
+      const response = await axios.get(`${API}/news?limit=30`);
+      setNews(response.data.news);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchNews = async () => {
+    if (!searchQuery.trim()) {
+      fetchNews();
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API}/news/search?query=${encodeURIComponent(searchQuery)}`);
+      setNews(response.data.results);
+    } catch (error) {
+      console.error('Error searching news:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterByTag = async (tag) => {
+    setSelectedTag(tag);
+    if (!tag) {
+      fetchNews();
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API}/news/tags/${tag}`);
+      setNews(response.data.news);
+    } catch (error) {
+      console.error('Error filtering news:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshNews = async () => {
+    setLoading(true);
+    try {
+      await axios.post(`${API}/news/refresh`);
+      await fetchNews();
+    } catch (error) {
+      console.error('Error refreshing news:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold text-slate-900">Noticias Normativas</h1>
+          <Button onClick={refreshNews} variant="outline">
+            Actualizar Noticias
+          </Button>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="flex gap-4 mb-6">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar noticias normativas..."
+                className="pl-10"
+                onKeyDown={(e) => e.key === 'Enter' && searchNews()}
+              />
+            </div>
+          </div>
+          <Button onClick={searchNews}>
+            Buscar
+          </Button>
+        </div>
+
+        {/* Tag Filters */}
+        <div className="flex gap-2 mb-6 flex-wrap">
+          <Button
+            size="sm"
+            variant={selectedTag === '' ? 'default' : 'outline'}
+            onClick={() => filterByTag('')}
+          >
+            Todas
+          </Button>
+          {['ai', 'gdpr', 'medical', 'insurance', 'regulation', 'eu', 'spain'].map((tag) => (
+            <Button
+              key={tag}
+              size="sm"
+              variant={selectedTag === tag ? 'default' : 'outline'}
+              onClick={() => filterByTag(tag)}
+            >
+              <Tag className="h-3 w-3 mr-1" />
+              {tag.toUpperCase()}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* News Grid */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {news.map((item) => (
+          <Card key={item.id} className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center justify-between mb-2">
+                <Badge variant="outline">{item.source}</Badge>
+                <div className="flex items-center text-sm text-slate-500">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  {new Date(item.scraped_at).toLocaleDateString('es-ES')}
+                </div>
+              </div>
+              <CardTitle className="text-lg leading-tight">
+                <a 
+                  href={item.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-600 transition-colors"
+                >
+                  {item.title}
+                </a>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-600 text-sm mb-4 line-clamp-3">
+                {item.ai_summary || item.summary}
+              </p>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex gap-1 flex-wrap">
+                  {item.tags?.slice(0, 3).map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+                <div className="text-sm text-slate-500">
+                  Relevancia: {item.relevance_score?.toFixed(1)}/10
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {news.length === 0 && (
+        <div className="text-center py-12">
+          <Newspaper className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-slate-700 mb-2">
+            No se encontraron noticias
+          </h3>
+          <p className="text-slate-500">
+            Intenta con diferentes términos de búsqueda o actualiza las noticias.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Documents Component
+const DocumentsComponent = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    fetchCategories();
+    fetchStats();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${API}/documents/categories`);
+      setCategories(response.data.categories);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const response = await axios.get(`${API}/documents/stats`);
+      setStats(response.data);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
+  const searchDocuments = async () => {
+    if (!searchQuery.trim()) return;
+
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        query: searchQuery,
+        k: '10'
+      });
+      
+      if (selectedCategory) {
+        params.append('category', selectedCategory);
+      }
+
+      const response = await axios.get(`${API}/documents/search?${params}`);
+      setSearchResults(response.data.results);
+    } catch (error) {
+      console.error('Error searching documents:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshDocuments = async () => {
+    setLoading(true);
+    try {
+      await axios.post(`${API}/documents/refresh`);
+      await fetchStats();
+    } catch (error) {
+      console.error('Error refreshing documents:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold text-slate-900">Base de Conocimiento</h1>
+          <Button onClick={refreshDocuments} variant="outline">
+            Actualizar Documentos
+          </Button>
+        </div>
+
+        {/* Stats */}
+        {stats && (
+          <div className="grid md:grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-2xl font-bold text-blue-600">{stats.total_documents}</div>
+                <div className="text-sm text-slate-600">Documentos</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-2xl font-bold text-green-600">{stats.total_chunks}</div>
+                <div className="text-sm text-slate-600">Fragmentos</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-2xl font-bold text-purple-600">{stats.categories.length}</div>
+                <div className="text-sm text-slate-600">Categorías</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="text-2xl font-bold text-orange-600">
+                  {Object.keys(stats.last_updates).length}
+                </div>
+                <div className="text-sm text-slate-600">Actualizados</div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Search */}
+        <div className="flex gap-4 mb-6">
+          <div className="flex-1">
+            <div className="relative">
+              <FileSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar en normativas: EU AI Act, GDPR, MDR, DGA..."
+                className="pl-10"
+                onKeyDown={(e) => e.key === 'Enter' && searchDocuments()}
+              />
+            </div>
+          </div>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Todas las categorías" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">Todas las categorías</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category.replace('_', ' ').toUpperCase()}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button onClick={searchDocuments} disabled={loading}>
+            {loading ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      </div>
+
+      {/* Search Results */}
+      {searchResults.length > 0 && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-slate-900">
+            Resultados de búsqueda ({searchResults.length})
+          </h2>
+          
+          {searchResults.map((result, index) => (
+            <Card key={index} className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">
+                    {result.metadata.title}
+                  </CardTitle>
+                  <Badge variant="outline">
+                    {result.metadata.category?.replace('_', ' ').toUpperCase()}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-slate-700 mb-4 leading-relaxed">
+                  {result.content}
+                </p>
+                <div className="text-sm text-slate-500">
+                  Fuente: {result.metadata.source} | 
+                  Fragmento: {result.metadata.chunk_id + 1}
+                  {result.metadata.last_updated && (
+                    <> | Actualizado: {new Date(result.metadata.last_updated).toLocaleDateString('es-ES')}</>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Available Documents */}
+      <div className="mt-12">
+        <h2 className="text-xl font-semibold text-slate-900 mb-6">Documentos Disponibles</h2>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card className="border-blue-200 bg-blue-50">
+            <CardHeader>
+              <CardTitle className="text-blue-900">EU AI Act</CardTitle>
+              <CardDescription>Reglamento de IA de la UE</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-blue-800">
+                Regulación completa sobre sistemas de inteligencia artificial en la Unión Europea.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-green-200 bg-green-50">
+            <CardHeader>
+              <CardTitle className="text-green-900">GDPR</CardTitle>
+              <CardDescription>Reglamento General de Protección de Datos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-green-800">
+                Normativa europea sobre protección de datos personales y privacidad.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-purple-200 bg-purple-50">
+            <CardHeader>
+              <CardTitle className="text-purple-900">MDR</CardTitle>
+              <CardDescription>Reglamento de Dispositivos Médicos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-purple-800">
+                Regulación de dispositivos médicos incluyendo software y sistemas de IA médica.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-orange-200 bg-orange-50">
+            <CardHeader>
+              <CardTitle className="text-orange-900">DGA</CardTitle>
+              <CardDescription>Ley de Gobernanza de Datos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-orange-800">
+                Marco para el intercambio y reutilización de datos en la UE.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader>
+              <CardTitle className="text-red-900">LGS</CardTitle>
+              <CardDescription>Ley General de Sanidad</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-red-800">
+                Normativa sanitaria española aplicable a startups de salud digital.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-teal-200 bg-teal-50">
+            <CardHeader>
+              <CardTitle className="text-teal-900">Ley de Seguros</CardTitle>
+              <CardDescription>Ley del Contrato de Seguro</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-teal-800">
+                Regulación de contratos de seguro aplicable a empresas insurtech.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main Dashboard with Sidebar
+const MainDashboard = () => {
   const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [stats, setStats] = useState(null);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (activeTab === 'dashboard') {
+      fetchDashboardData();
+    }
+  }, [activeTab]);
 
   const fetchDashboardData = async () => {
     try {
@@ -515,131 +1250,119 @@ const Dashboard = () => {
     );
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Cargando dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xl font-bold">AI Compliance Pro</span>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-slate-600">
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return (
+          <div className="p-6 max-w-7xl mx-auto">
+            {/* Welcome Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-slate-900">
                 Bienvenido, {user?.company_name}
-              </span>
-              <Button variant="outline" onClick={logout}>
-                Cerrar Sesión
-              </Button>
+              </h1>
+              <p className="text-slate-600 mt-2">
+                Panel de control de cumplimiento normativo para {user?.company_type === 'digital_health' ? 'salud digital' : 'insurtech'}
+              </p>
             </div>
-          </div>
-        </div>
-      </header>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-slate-600">Total Evaluaciones</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats?.total_assessments || 0}</div>
-            </CardContent>
-          </Card>
+            {/* Top Actions */}
+            <div className="mb-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Acciones Rápidas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-4 gap-4">
+                    <Button onClick={() => setActiveTab('assessment')} className="h-20 flex-col">
+                      <FileText className="h-6 w-6 mb-2" />
+                      Nueva Evaluación
+                    </Button>
+                    <Button onClick={() => setActiveTab('chat')} variant="outline" className="h-20 flex-col">
+                      <MessageCircle className="h-6 w-6 mb-2" />
+                      Consultar IA
+                    </Button>
+                    <Button onClick={() => setActiveTab('news')} variant="outline" className="h-20 flex-col">
+                      <Newspaper className="h-6 w-6 mb-2" />
+                      Ver Noticias
+                    </Button>
+                    <Button onClick={() => setActiveTab('docs')} variant="outline" className="h-20 flex-col">
+                      <BookOpen className="h-6 w-6 mb-2" />
+                      Documentos
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-slate-600">Puntuación de Riesgo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats?.latest_risk_score?.toFixed(1) || '0.0'}/10.0</div>
-              <Progress value={(stats?.latest_risk_score || 0) * 10} className="mt-2" />
-            </CardContent>
-          </Card>
+            {/* Stats Cards */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium text-slate-600">Total Evaluaciones</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats?.total_assessments || 0}</div>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-slate-600">Estado de Cumplimiento</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {stats?.compliance_status === 'compliant' && (
-                  <Badge className="bg-green-100 text-green-700 border-green-200">
-                    <CheckCircle className="h-3 w-3 mr-1" />
-                    Cumple
-                  </Badge>
-                )}
-                {stats?.compliance_status === 'partially_compliant' && (
-                  <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">
-                    <AlertTriangle className="h-3 w-3 mr-1" />
-                    Parcial
-                  </Badge>
-                )}
-                {stats?.compliance_status === 'non_compliant' && (
-                  <Badge className="bg-red-100 text-red-700 border-red-200">
-                    <XCircle className="h-3 w-3 mr-1" />
-                    No Cumple
-                  </Badge>
-                )}
-                {stats?.compliance_status === 'not_assessed' && (
-                  <Badge className="bg-slate-100 text-slate-700 border-slate-200">
-                    Sin Evaluar
-                  </Badge>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium text-slate-600">Puntuación de Riesgo</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats?.latest_risk_score?.toFixed(1) || '0.0'}/10.0</div>
+                  <Progress value={(stats?.latest_risk_score || 0) * 10} className="mt-2" />
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-slate-600">Recomendaciones</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats?.recommendations_count || 0}</div>
-            </CardContent>
-          </Card>
-        </div>
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium text-slate-600">Estado de Cumplimiento</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {stats?.compliance_status === 'compliant' && (
+                      <Badge className="bg-green-100 text-green-700 border-green-200">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Cumple
+                      </Badge>
+                    )}
+                    {stats?.compliance_status === 'partially_compliant' && (
+                      <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">
+                        <AlertTriangle className="h-3 w-3 mr-1" />
+                        Parcial
+                      </Badge>
+                    )}
+                    {stats?.compliance_status === 'non_compliant' && (
+                      <Badge className="bg-red-100 text-red-700 border-red-200">
+                        <XCircle className="h-3 w-3 mr-1" />
+                        No Cumple
+                      </Badge>
+                    )}
+                    {stats?.compliance_status === 'not_assessed' && (
+                      <Badge className="bg-slate-100 text-slate-700 border-slate-200">
+                        Sin Evaluar
+                      </Badge>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
 
-        {/* Main Content */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            {/* Assessment Button */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Nueva Evaluación
-                </CardTitle>
-                <CardDescription>
-                  Realiza una nueva evaluación de cumplimiento del EU AI Act
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => window.location.href = '/assessment'} className="w-full">
-                  Iniciar Evaluación
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium text-slate-600">Recomendaciones</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats?.recommendations_count || 0}</div>
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Recent Assessments */}
-            <Card>
+            <Card className="mb-8">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <BarChart3 className="h-5 w-5" />
@@ -678,55 +1401,52 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </div>
+        );
+        
+      case 'assessment':
+        return <AssessmentComponent />;
+        
+      case 'chat':
+        return <ChatComponent />;
+        
+      case 'news':
+        return <NewsComponent />;
+        
+      case 'docs':
+        return <DocumentsComponent />;
+        
+      default:
+        return <div>Contenido no encontrado</div>;
+    }
+  };
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Información de la Empresa</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <div className="text-sm text-slate-600">Nombre</div>
-                  <div className="font-medium">{user?.company_name}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-slate-600">Tipo</div>
-                  <div className="font-medium">
-                    {user?.company_type === 'digital_health' ? 'Salud Digital' : 'Insurtech'}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-slate-600">Email</div>
-                  <div className="font-medium">{user?.email}</div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Recursos Útiles</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <a href="#" className="block text-blue-600 hover:underline text-sm">
-                  Guía del EU AI Act
-                </a>
-                <a href="#" className="block text-blue-600 hover:underline text-sm">
-                  Mejores Prácticas
-                </a>
-                <a href="#" className="block text-blue-600 hover:underline text-sm">
-                  Contactar Soporte
-                </a>
-              </CardContent>
-            </Card>
+  return (
+    <div className="min-h-screen bg-slate-50 flex">
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      
+      <div className="flex-1 flex flex-col">
+        {/* Top Bar */}
+        <header className="bg-white border-b border-slate-200">
+          <div className="px-6 py-4 flex justify-between items-center">
+            <div className="text-sm text-slate-600">
+              {user?.company_type === 'digital_health' ? 'Salud Digital' : 'Insurtech'} | {user?.email}
+            </div>
+            <Button variant="outline" onClick={logout}>
+              Cerrar Sesión
+            </Button>
           </div>
-        </div>
+        </header>
+        
+        {/* Main Content */}
+        <main className="flex-1 overflow-auto">
+          {renderContent()}
+        </main>
       </div>
     </div>
   );
 };
 
-// Assessment Component
+// Assessment Component (same as before)
 const AssessmentComponent = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState({});
@@ -859,113 +1579,111 @@ const AssessmentComponent = () => {
 
   if (result) {
     return (
-      <div className="min-h-screen bg-slate-50 py-8 px-6">
-        <div className="max-w-4xl mx-auto">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Resultados de la Evaluación</CardTitle>
-              <CardDescription>
-                Evaluación completada el {new Date(result.created_at).toLocaleDateString('es-ES')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Risk Score */}
-              <div className="text-center space-y-4">
-                <div>
-                  <div className="text-4xl font-bold text-slate-900">{result.risk_score.toFixed(1)}/10.0</div>
-                  <div className="text-slate-600">Puntuación de Riesgo</div>
-                </div>
-                <Progress value={result.risk_score * 10} className="max-w-md mx-auto" />
-                
-                <div className="flex justify-center">
-                  {result.risk_level === 'minimal' && (
-                    <Badge className="bg-green-100 text-green-700 border-green-200 text-lg px-4 py-2">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      Riesgo Mínimo
-                    </Badge>
-                  )}
-                  {result.risk_level === 'limited' && (
-                    <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200 text-lg px-4 py-2">
-                      <AlertTriangle className="h-4 w-4 mr-2" />
-                      Riesgo Limitado
-                    </Badge>
-                  )}
-                  {result.risk_level === 'high' && (
-                    <Badge className="bg-orange-100 text-orange-700 border-orange-200 text-lg px-4 py-2">
-                      <AlertTriangle className="h-4 w-4 mr-2" />
-                      Alto Riesgo
-                    </Badge>
-                  )}
-                  {result.risk_level === 'unacceptable' && (
-                    <Badge className="bg-red-100 text-red-700 border-red-200 text-lg px-4 py-2">
-                      <XCircle className="h-4 w-4 mr-2" />
-                      Riesgo Inaceptable
-                    </Badge>
-                  )}
-                </div>
+      <div className="p-6 max-w-4xl mx-auto">
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Resultados de la Evaluación</CardTitle>
+            <CardDescription>
+              Evaluación completada el {new Date(result.created_at).toLocaleDateString('es-ES')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Risk Score */}
+            <div className="text-center space-y-4">
+              <div>
+                <div className="text-4xl font-bold text-slate-900">{result.risk_score.toFixed(1)}/10.0</div>
+                <div className="text-slate-600">Puntuación de Riesgo</div>
               </div>
-
-              <Separator />
-
-              {/* Compliance Status */}
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">Estado de Cumplimiento</h3>
-                {result.compliance_status === 'compliant' && (
+              <Progress value={result.risk_score * 10} className="max-w-md mx-auto" />
+              
+              <div className="flex justify-center">
+                {result.risk_level === 'minimal' && (
                   <Badge className="bg-green-100 text-green-700 border-green-200 text-lg px-4 py-2">
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    Cumple con EU AI Act
+                    Riesgo Mínimo
                   </Badge>
                 )}
-                {result.compliance_status === 'partially_compliant' && (
+                {result.risk_level === 'limited' && (
                   <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200 text-lg px-4 py-2">
                     <AlertTriangle className="h-4 w-4 mr-2" />
-                    Cumplimiento Parcial
+                    Riesgo Limitado
                   </Badge>
                 )}
-                {result.compliance_status === 'non_compliant' && (
+                {result.risk_level === 'high' && (
+                  <Badge className="bg-orange-100 text-orange-700 border-orange-200 text-lg px-4 py-2">
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    Alto Riesgo
+                  </Badge>
+                )}
+                {result.risk_level === 'unacceptable' && (
                   <Badge className="bg-red-100 text-red-700 border-red-200 text-lg px-4 py-2">
                     <XCircle className="h-4 w-4 mr-2" />
-                    No Cumple
+                    Riesgo Inaceptable
                   </Badge>
                 )}
               </div>
+            </div>
 
-              <Separator />
+            <Separator />
 
-              {/* Recommendations */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Recomendaciones</h3>
-                <div className="space-y-3">
-                  {result.recommendations.map((recommendation, index) => (
-                    <div key={index} className="flex items-start space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <Target className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-slate-700">{recommendation}</p>
-                    </div>
-                  ))}
-                </div>
+            {/* Compliance Status */}
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-2">Estado de Cumplimiento</h3>
+              {result.compliance_status === 'compliant' && (
+                <Badge className="bg-green-100 text-green-700 border-green-200 text-lg px-4 py-2">
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Cumple con EU AI Act
+                </Badge>
+              )}
+              {result.compliance_status === 'partially_compliant' && (
+                <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200 text-lg px-4 py-2">
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  Cumplimiento Parcial
+                </Badge>
+              )}
+              {result.compliance_status === 'non_compliant' && (
+                <Badge className="bg-red-100 text-red-700 border-red-200 text-lg px-4 py-2">
+                  <XCircle className="h-4 w-4 mr-2" />
+                  No Cumple
+                </Badge>
+              )}
+            </div>
+
+            <Separator />
+
+            {/* Recommendations */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Recomendaciones</h3>
+              <div className="space-y-3">
+                {result.recommendations.map((recommendation, index) => (
+                  <div key={index} className="flex items-start space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <Target className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-slate-700">{recommendation}</p>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <div className="flex space-x-4 justify-center pt-4">
-                <Button onClick={() => window.location.href = '/dashboard'}>
-                  Volver al Dashboard
-                </Button>
-                <Button variant="outline" onClick={() => {
-                  // Generate report functionality would go here
-                  alert('Funcionalidad de reporte próximamente');
-                }}>
-                  Generar Reporte
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            <div className="flex space-x-4 justify-center pt-4">
+              <Button onClick={() => window.location.reload()}>
+                Nueva Evaluación
+              </Button>
+              <Button variant="outline" onClick={() => {
+                // Generate report functionality would go here
+                alert('Funcionalidad de reporte próximamente');
+              }}>
+                Generar Reporte
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600">Procesando evaluación...</p>
@@ -975,57 +1693,55 @@ const AssessmentComponent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-6">
-      <div className="max-w-2xl mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Evaluación EU AI Act</span>
-              <span className="text-sm font-normal text-slate-600">
-                {currentStep + 1} de {questions.length}
-              </span>
-            </CardTitle>
-            <Progress value={progress} className="mt-2" />
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div>
-              <h3 className="text-lg font-medium mb-4">{currentQuestion.question}</h3>
-              
-              <RadioGroup
-                value={responses[currentQuestion.id] || ''}
-                onValueChange={(value) => handleAnswer(currentQuestion.id, value)}
-              >
-                {currentQuestion.options.map((option) => (
-                  <div key={option.value} className="flex items-center space-x-2">
-                    <RadioGroupItem value={option.value} id={option.value} />
-                    <Label htmlFor={option.value} className="flex-1 cursor-pointer">
-                      {option.label}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
+    <div className="p-6 max-w-2xl mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>Evaluación EU AI Act</span>
+            <span className="text-sm font-normal text-slate-600">
+              {currentStep + 1} de {questions.length}
+            </span>
+          </CardTitle>
+          <Progress value={progress} className="mt-2" />
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h3 className="text-lg font-medium mb-4">{currentQuestion.question}</h3>
+            
+            <RadioGroup
+              value={responses[currentQuestion.id] || ''}
+              onValueChange={(value) => handleAnswer(currentQuestion.id, value)}
+            >
+              {currentQuestion.options.map((option) => (
+                <div key={option.value} className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.value} id={option.value} />
+                  <Label htmlFor={option.value} className="flex-1 cursor-pointer">
+                    {option.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
 
-            <div className="flex justify-between">
-              <Button 
-                variant="outline" 
-                onClick={handlePrevious} 
-                disabled={currentStep === 0}
-              >
-                Anterior
-              </Button>
-              
-              <Button 
-                onClick={handleNext}
-                disabled={!responses[currentQuestion.id]}
-              >
-                {currentStep === questions.length - 1 ? 'Finalizar' : 'Siguiente'}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          <div className="flex justify-between">
+            <Button 
+              variant="outline" 
+              onClick={handlePrevious} 
+              disabled={currentStep === 0}
+            >
+              Anterior
+            </Button>
+            
+            <Button 
+              onClick={handleNext}
+              disabled={!responses[currentQuestion.id]}
+            >
+              {currentStep === questions.length - 1 ? 'Finalizar' : 'Siguiente'}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
@@ -1048,7 +1764,7 @@ function App() {
         <Routes>
           <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LandingPage />} />
           <Route path="/auth" element={user ? <Navigate to="/dashboard" /> : <AuthComponent />} />
-          <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/auth" />} />
+          <Route path="/dashboard" element={user ? <MainDashboard /> : <Navigate to="/auth" />} />
           <Route path="/assessment" element={user ? <AssessmentComponent /> : <Navigate to="/auth" />} />
         </Routes>
       </BrowserRouter>
