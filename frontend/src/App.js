@@ -1276,7 +1276,327 @@ const TimelineComponent = () => {
       )}
     </div>
   );
+;
+
+// Timeline Component
+const TimelineComponent = () => {
+  const [timelineEvents, setTimelineEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filterType, setFilterType] = useState('all');
+
+  // Sample timeline data
+  const sampleEvents = [
+    {
+      id: '1',
+      title: 'EU AI Act - Entrada en Vigor Total',
+      description: 'El Reglamento de IA de la UE entra en plena vigencia para todos los sistemas de IA de alto riesgo.',
+      date: '2025-08-02',
+      type: 'regulation',
+      priority: 'high',
+      category: 'EU AI Act',
+      status: 'upcoming',
+      impact: 'Todas las startups con sistemas de IA de alto riesgo deben cumplir con evaluaciones de conformidad obligatorias.'
+    },
+    {
+      id: '2',
+      title: 'Conferencia HealthTech Madrid 2025',
+      description: 'Evento líder en tecnología sanitaria con foco en cumplimiento normativo de IA médica.',
+      date: '2025-03-15',
+      type: 'event',
+      priority: 'medium',
+      category: 'Salud Digital',
+      status: 'upcoming',
+      impact: 'Oportunidad de networking y aprendizaje sobre regulaciones de dispositivos médicos.'
+    },
+    {
+      id: '3',
+      title: 'GDPR - Nuevas Directrices IA',
+      description: 'La Comisión Europea publica directrices definitivas sobre GDPR aplicado a sistemas de IA.',
+      date: '2025-04-28',
+      type: 'regulation',
+      priority: 'high',
+      category: 'GDPR',
+      status: 'upcoming',
+      impact: 'Clarificaciones importantes sobre consentimiento y procesamiento de datos para IA.'
+    },
+    {
+      id: '4',
+      title: 'InsurTech Summit Barcelona',
+      description: 'Cumbre anual de seguros y tecnología con panel sobre IA y compliance.',
+      date: '2025-05-20',
+      type: 'event',
+      priority: 'medium',
+      category: 'Insurtech',
+      status: 'upcoming',
+      impact: 'Presentación de mejores prácticas en suscripción automática y evaluación de riesgos.'
+    },
+    {
+      id: '5',
+      title: 'MDR - Actualización Software Médico',
+      description: 'AEMPS publica guías actualizadas para software médico con IA bajo MDR.',
+      date: '2025-06-10',
+      type: 'regulation',
+      priority: 'high',
+      category: 'MDR',
+      status: 'upcoming',
+      impact: 'Nuevos requisitos específicos para validación clínica de algoritmos médicos.'
+    },
+    {
+      id: '6',
+      title: 'Data Governance Act - Implementación',
+      description: 'Fecha límite para implementación completa del DGA en España.',
+      date: '2025-09-24',
+      type: 'deadline',
+      priority: 'high',
+      category: 'DGA',
+      status: 'upcoming',
+      impact: 'Requisitos obligatorios para intercambio de datos en sectores regulados.'
+    },
+    {
+      id: '7',
+      title: 'Jornada AEMPS: IA en Dispositivos Médicos',
+      description: 'Jornada técnica sobre aplicación del MDR a dispositivos médicos con IA.',
+      date: '2025-07-18',
+      type: 'event',
+      priority: 'high',
+      category: 'Regulatorio',
+      status: 'upcoming',
+      impact: 'Orientación oficial sobre procedimientos de evaluación de conformidad.'
+    },
+    {
+      id: '8',
+      title: 'Digital Services Act - Auditorías IA',
+      description: 'Inicio de auditorías obligatorias para plataformas que usen sistemas de recomendación con IA.',
+      date: '2025-02-17',
+      type: 'deadline',
+      priority: 'medium',
+      category: 'DSA',
+      status: 'upcoming',
+      impact: 'Afecta a plataformas digitales que procesan datos de usuarios europeos.'
+    }
+  ];
+
+  useEffect(() => {
+    // Simulate loading
+    setTimeout(() => {
+      setTimelineEvents(sampleEvents);
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  const filteredEvents = timelineEvents.filter(event => {
+    if (filterType === 'all') return true;
+    return event.type === filterType;
+  });
+
+  const sortedEvents = filteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  const getEventIcon = (type) => {
+    switch (type) {
+      case 'regulation': return <FileText className="h-5 w-5" />;
+      case 'event': return <Users className="h-5 w-5" />;
+      case 'deadline': return <AlertCircle className="h-5 w-5" />;
+      default: return <Calendar className="h-5 w-5" />;
+    }
+  };
+
+  const getEventColor = (priority, type) => {
+    if (priority === 'high') return 'border-red-200 bg-red-50';
+    if (type === 'event') return 'border-blue-200 bg-blue-50';
+    if (type === 'deadline') return 'border-orange-200 bg-orange-50';
+    return 'border-slate-200 bg-slate-50';
+  };
+
+  const getPriorityBadge = (priority) => {
+    const configs = {
+      high: { color: 'bg-red-100 text-red-700 border-red-200', text: 'Alto' },
+      medium: { color: 'bg-yellow-100 text-yellow-700 border-yellow-200', text: 'Medio' },
+      low: { color: 'bg-green-100 text-green-700 border-green-200', text: 'Bajo' }
+    };
+    
+    const config = configs[priority] || configs.medium;
+    return (
+      <Badge className={`${config.color} text-xs`}>
+        {config.text}
+      </Badge>
+    );
+  };
+
+  const getTypeBadge = (type) => {
+    const configs = {
+      regulation: { color: 'bg-purple-100 text-purple-700 border-purple-200', text: 'Normativa' },
+      event: { color: 'bg-blue-100 text-blue-700 border-blue-200', text: 'Evento' },
+      deadline: { color: 'bg-orange-100 text-orange-700 border-orange-200', text: 'Fecha Límite' }
+    };
+    
+    const config = configs[type] || configs.regulation;
+    return (
+      <Badge className={`${config.color} text-xs`}>
+        {config.text}
+      </Badge>
+    );
+  };
+
+  const getDaysUntil = (dateString) => {
+    const eventDate = new Date(dateString);
+    const today = new Date();
+    const diffTime = eventDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return `Hace ${Math.abs(diffDays)} días`;
+    if (diffDays === 0) return 'Hoy';
+    if (diffDays === 1) return 'Mañana';
+    return `En ${diffDays} días`;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Cronograma Normativo</h1>
+            <p className="text-slate-600 mt-2">
+              Próximos hitos importantes en regulación de IA, eventos y fechas límite de cumplimiento
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Clock className="h-5 w-5 text-slate-500" />
+            <span className="text-sm text-slate-600">Actualizado hoy</span>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-2 mb-6 flex-wrap">
+          <Button
+            size="sm"
+            variant={filterType === 'all' ? 'default' : 'outline'}
+            onClick={() => setFilterType('all')}
+          >
+            Todos
+          </Button>
+          <Button
+            size="sm"
+            variant={filterType === 'regulation' ? 'default' : 'outline'}
+            onClick={() => setFilterType('regulation')}
+          >
+            <FileText className="h-3 w-3 mr-1" />
+            Normativas
+          </Button>
+          <Button
+            size="sm"
+            variant={filterType === 'event' ? 'default' : 'outline'}
+            onClick={() => setFilterType('event')}
+          >
+            <Users className="h-3 w-3 mr-1" />
+            Eventos
+          </Button>
+          <Button
+            size="sm"
+            variant={filterType === 'deadline' ? 'default' : 'outline'}
+            onClick={() => setFilterType('deadline')}
+          >
+            <AlertCircle className="h-3 w-3 mr-1" />
+            Fechas Límite
+          </Button>
+        </div>
+      </div>
+
+      {/* Timeline */}
+      <div className="relative">
+        {/* Timeline line */}
+        <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+        
+        <div className="space-y-8">
+          {sortedEvents.map((event, index) => (
+            <div key={event.id} className="relative flex items-start space-x-6">
+              {/* Timeline dot */}
+              <div className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-2 ${
+                event.priority === 'high' ? 'bg-red-100 border-red-300' :
+                event.type === 'event' ? 'bg-blue-100 border-blue-300' :
+                event.type === 'deadline' ? 'bg-orange-100 border-orange-300' :
+                'bg-slate-100 border-slate-300'
+              }`}>
+                {getEventIcon(event.type)}
+              </div>
+
+              {/* Event Card */}
+              <Card className={`flex-1 ${getEventColor(event.priority, event.type)} hover:shadow-md transition-shadow`}>
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        {getTypeBadge(event.type)}
+                        {getPriorityBadge(event.priority)}
+                        <Badge variant="outline" className="text-xs">
+                          {event.category}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-lg leading-tight">
+                        {event.title}
+                      </CardTitle>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-medium text-slate-900">
+                        {new Date(event.date).toLocaleDateString('es-ES', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </div>
+                      <div className={`text-xs font-medium ${
+                        getDaysUntil(event.date).includes('días') && !getDaysUntil(event.date).includes('Hace') 
+                          ? 'text-blue-600' : 'text-slate-500'
+                      }`}>
+                        {getDaysUntil(event.date)}
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-700 mb-3 leading-relaxed">
+                    {event.description}
+                  </p>
+                  
+                  <div className="bg-white/60 border border-slate-200 rounded-lg p-3">
+                    <div className="text-xs font-medium text-slate-600 mb-1">
+                      Impacto para startups:
+                    </div>
+                    <div className="text-sm text-slate-700">
+                      {event.impact}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {sortedEvents.length === 0 && (
+        <div className="text-center py-12">
+          <Clock className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-slate-700 mb-2">
+            No hay eventos próximos
+          </h3>
+          <p className="text-slate-500">
+            Los próximos hitos normativos aparecerán aquí cuando estén disponibles.
+          </p>
+        </div>
+      )}
+    </div>
+  );
 };
+
+// Documents Component
+const DocumentsComponent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
