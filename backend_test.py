@@ -340,6 +340,95 @@ class AIComplianceAPITester:
                 return False
         
         return False
+    def test_medical_diagnosis_spanish(self):
+        """Test medical diagnosis specific Spanish recommendations"""
+        medical_responses = {
+            "company_description": "medical_diagnosis",
+            "medical_diagnosis": "yes",
+            "automated_decision_making": "partial",
+            "biometric_identification": "no",
+            "emotion_recognition": "no",
+            "data_processing": "sensitive",
+            "transparency": "partial",
+            "human_oversight": "periodic"
+        }
+        
+        success, response = self.run_test(
+            "Medical Diagnosis Assessment (Spanish)",
+            "POST",
+            "assessments",
+            200,
+            data={"responses": medical_responses}
+        )
+        
+        if success:
+            recommendations = response.get('recommendations', [])
+            
+            # Check for medical-specific Spanish recommendations
+            medical_keywords = ['validación clínica', 'dispositivos médicos', 'autoridades sanitarias', 'validación clínica continua']
+            medical_recommendations = [rec for rec in recommendations if any(keyword in rec for keyword in medical_keywords)]
+            
+            print(f"   Total Recommendations: {len(recommendations)}")
+            print(f"   Medical-specific Spanish Recommendations: {len(medical_recommendations)}")
+            
+            if medical_recommendations:
+                print(f"   Medical Spanish Recommendations Found:")
+                for i, rec in enumerate(medical_recommendations):
+                    print(f"     {i+1}. {rec}")
+                return True
+            else:
+                print(f"❌ No medical-specific Spanish recommendations found")
+                print(f"   All recommendations:")
+                for i, rec in enumerate(recommendations):
+                    print(f"     {i+1}. {rec}")
+                return False
+        
+        return False
+
+    def test_sensitive_data_spanish(self):
+        """Test sensitive data processing Spanish recommendations"""
+        sensitive_data_responses = {
+            "company_description": "insurance_risk_assessment",
+            "medical_diagnosis": "no",
+            "automated_decision_making": "yes",
+            "biometric_identification": "no",
+            "emotion_recognition": "no",
+            "data_processing": "sensitive",
+            "transparency": "minimal",
+            "human_oversight": "exception"
+        }
+        
+        success, response = self.run_test(
+            "Sensitive Data Assessment (Spanish)",
+            "POST",
+            "assessments",
+            200,
+            data={"responses": sensitive_data_responses}
+        )
+        
+        if success:
+            recommendations = response.get('recommendations', [])
+            
+            # Check for GDPR and data-specific Spanish recommendations
+            data_keywords = ['GDPR', 'datos personales', 'minimización de datos', 'cumplimiento del GDPR']
+            data_recommendations = [rec for rec in recommendations if any(keyword in rec for keyword in data_keywords)]
+            
+            print(f"   Total Recommendations: {len(recommendations)}")
+            print(f"   Data-specific Spanish Recommendations: {len(data_recommendations)}")
+            
+            if data_recommendations:
+                print(f"   Data Spanish Recommendations Found:")
+                for i, rec in enumerate(data_recommendations):
+                    print(f"     {i+1}. {rec}")
+                return True
+            else:
+                print(f"❌ No data-specific Spanish recommendations found")
+                print(f"   All recommendations:")
+                for i, rec in enumerate(recommendations):
+                    print(f"     {i+1}. {rec}")
+                return False
+        
+        return False
 
     def test_invalid_endpoints(self):
         """Test invalid endpoints return proper errors"""
