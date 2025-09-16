@@ -540,7 +540,7 @@ const ChatComponent = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('all');
 
   useEffect(() => {
     fetchSessions();
