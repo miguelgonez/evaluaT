@@ -126,60 +126,79 @@ class NewsService:
         return news_items
     
     async def scrape_boe_news(self) -> List[Dict[str, Any]]:
-        """Scrape news from BOE"""
+        """Scrape real news from BOE (Boletín Oficial del Estado)"""
         news_items = []
         try:
-            # Search BOE for relevant topics
-            search_terms = ["inteligencia artificial", "dispositivos médicos", "protección datos"]
+            # Real BOE search terms for AI and tech regulation
+            search_terms = [
+                "inteligencia artificial",
+                "dispositivos médicos",
+                "protección datos",
+                "seguros digitales",
+                "telemedicina"
+            ]
             
             for term in search_terms:
-                search_url = f"https://www.boe.es/buscar/doc.php?texto={term}"
-                
-                headers = {
-                    'User-Agent': 'Mozilla/5.0 (compatible; ComplianceNewsBot/1.0)'
-                }
-                
-                response = requests.get(search_url, headers=headers, timeout=30)
-                if response.status_code != 200:
-                    continue
-                
-                soup = BeautifulSoup(response.content, 'html.parser')
-                
-                # Look for recent documents
-                results = soup.find_all('div', class_='resultado_busqueda')[:3]  # Top 3 per term
-                
-                for result in results:
-                    try:
-                        title_elem = result.find('h3')
-                        if not title_elem:
-                            continue
-                        
-                        link_elem = title_elem.find('a')
-                        if not link_elem:
-                            continue
-                        
-                        title = link_elem.get_text(strip=True)
-                        link = urljoin("https://www.boe.es", link_elem.get('href', ''))
-                        
-                        # Get summary
-                        summary_elem = result.find('p')
-                        summary = summary_elem.get_text(strip=True)[:300] if summary_elem else ""
-                        
-                        news_items.append({
-                            "title": title,
-                            "url": link,
-                            "summary": summary,
-                            "source": "BOE",
-                            "category": "regulation",
-                            "search_term": term,
-                            "language": "es"
-                        })
-                        
-                    except Exception as e:
-                        logger.warning(f"Error parsing BOE result: {str(e)}")
+                try:
+                    # Real BOE search URL
+                    search_url = f"https://www.boe.es/buscar/doc.php?texto={term.replace(' ', '+')}"
+                    
+                    headers = {
+                        'User-Agent': 'Mozilla/5.0 (compatible; ComplianceNewsBot/1.0)',
+                        'Accept-Language': 'es-ES,es;q=0.9'
+                    }
+                    
+                    response = requests.get(search_url, headers=headers, timeout=30)
+                    if response.status_code != 200:
                         continue
+                    
+                    soup = BeautifulSoup(response.content, 'html.parser')
+                    
+                    # Look for recent documents in BOE structure
+                    results = soup.find_all('div', class_='resultado_busqueda')[:2]  # Top 2 per term
+                    
+                    for result in results:
+                        try:
+                            title_elem = result.find('h3')
+                            if not title_elem:
+                                continue
+                            
+                            link_elem = title_elem.find('a')
+                            if not link_elem:
+                                continue
+                            
+                            title = link_elem.get_text(strip=True)
+                            link = urljoin("https://www.boe.es", link_elem.get('href', ''))
+                            
+                            # Get summary/description
+                            summary_elem = result.find('p')
+                            summary = summary_elem.get_text(strip=True)[:300] if summary_elem else ""
+                            
+                            # Extract date from BOE format if available
+                            date_elem = result.find('span', class_='fecha')
+                            date_str = date_elem.get_text(strip=True) if date_elem else None
+                            
+                            news_items.append({
+                                "title": title,
+                                "url": link,
+                                "summary": summary,
+                                "source": "BOE",
+                                "category": "regulation",
+                                "search_term": term,
+                                "language": "es",
+                                "date_str": date_str,
+                                "scraped_from": "official_source"
+                            })
+                            
+                        except Exception as e:
+                            logger.warning(f"Error parsing BOE result: {str(e)}")
+                            continue
+                
+                except Exception as e:
+                    logger.warning(f"Error with BOE search term {term}: {str(e)}")
+                    continue
             
-            logger.info(f"Scraped {len(news_items)} items from BOE")
+            logger.info(f"Scraped {len(news_items)} real items from BOE")
             
         except Exception as e:
             logger.error(f"Error scraping BOE: {str(e)}")
