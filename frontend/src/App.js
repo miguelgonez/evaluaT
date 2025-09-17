@@ -2286,6 +2286,9 @@ const MainDashboard = () => {
       case 'news':
         return <NewsComponent />;
         
+      case 'articles':
+        return <ArticlesComponent />;
+        
       case 'docs':
         return <DocumentsComponent />;
         
