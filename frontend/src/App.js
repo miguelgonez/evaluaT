@@ -967,95 +967,103 @@ const TimelineComponent = () => {
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState('all');
 
-  // Sample timeline data
+  // Real timeline data based on verified sources
   const sampleEvents = [
     {
       id: '1',
-      title: 'EU AI Act - Entrada en Vigor Total',
-      description: 'El Reglamento de IA de la UE entra en plena vigencia para todos los sistemas de IA de alto riesgo.',
+      title: 'EU AI Act - Primera Implementación GPAI',
+      description: 'Proveedores de nuevos sistemas de IA de propósito general no disponibles en el mercado deben cumplir antes del lanzamiento en la UE.',
       date: '2025-08-02',
       type: 'regulation',
       priority: 'high',
       category: 'EU AI Act',
       status: 'upcoming',
-      impact: 'Todas las startups con sistemas de IA de alto riesgo deben cumplir con evaluaciones de conformidad obligatorias.'
+      impact: 'Startups con sistemas GPAI nuevos deben cumplir completamente antes de lanzar en mercado europeo.',
+      source: 'Orrick Legal Analysis & EU AI Act Official Timeline'
     },
     {
       id: '2',
-      title: 'Conferencia HealthTech Madrid 2025',
-      description: 'Evento líder en tecnología sanitaria con foco en cumplimiento normativo de IA médica.',
-      date: '2025-03-15',
-      type: 'event',
-      priority: 'medium',
-      category: 'Salud Digital',
-      status: 'upcoming',
-      impact: 'Oportunidad de networking y aprendizaje sobre regulaciones de dispositivos médicos.'
-    },
-    {
-      id: '3',
-      title: 'GDPR - Nuevas Directrices IA',
-      description: 'La Comisión Europea publica directrices definitivas sobre GDPR aplicado a sistemas de IA.',
-      date: '2025-04-28',
-      type: 'regulation',
-      priority: 'high',
-      category: 'GDPR',
-      status: 'upcoming',
-      impact: 'Clarificaciones importantes sobre consentimiento y procesamiento de datos para IA.'
-    },
-    {
-      id: '4',
-      title: 'InsurTech Summit Barcelona',
-      description: 'Cumbre anual de seguros y tecnología con panel sobre IA y compliance.',
-      date: '2025-05-20',
+      title: 'Insurance World Challenges 2025',
+      description: 'Evento premier de InsurTech europeo enfocado en transformación digital del sector seguros, IA y big data.',
+      date: '2025-03-26',
       type: 'event',
       priority: 'medium',
       category: 'Insurtech',
       status: 'upcoming',
-      impact: 'Presentación de mejores prácticas en suscripción automática y evaluación de riesgos.'
+      impact: 'Oportunidad para startups insurtech de conectar con 500+ profesionales del sector en Madrid.',
+      source: 'Insurance World Challenges Official'
     },
     {
-      id: '5',
-      title: 'MDR - Actualización Software Médico',
-      description: 'AEMPS publica guías actualizadas para software médico con IA bajo MDR.',
-      date: '2025-06-10',
-      type: 'regulation',
-      priority: 'high',
-      category: 'MDR',
-      status: 'upcoming',
-      impact: 'Nuevos requisitos específicos para validación clínica de algoritmos médicos.'
-    },
-    {
-      id: '6',
-      title: 'Data Governance Act - Implementación',
-      description: 'Fecha límite para implementación completa del DGA en España.',
+      id: '3',
+      title: 'Data Governance Act - Fecha Límite Certificación',
+      description: 'Entidades que ya proporcionan servicios de intermediación de datos deben obtener certificación bajo DGA.',
       date: '2025-09-24',
       type: 'deadline',
       priority: 'high',
       category: 'DGA',
       status: 'upcoming',
-      impact: 'Requisitos obligatorios para intercambio de datos en sectores regulados.'
+      impact: 'Proveedores de servicios de intermediación de datos existentes deben certificarse obligatoriamente.',
+      source: 'Hogan Lovells Legal Analysis'
+    },
+    {
+      id: '4',
+      title: 'EU Data Act - Entrada en Vigor',
+      description: 'Nuevas obligaciones de intercambio de datos para dispositivos conectados e IoT entran en aplicación.',
+      date: '2025-09-12',
+      type: 'regulation',
+      priority: 'high',
+      category: 'Data Act',
+      status: 'upcoming',
+      impact: 'Empresas con productos conectados deben habilitar acceso a datos para usuarios y metadatos relacionados.',
+      source: 'WSG Data Advisor & EU Data Act Official'
+    },
+    {
+      id: '5',
+      title: '5th Digital Health Conference Madrid',
+      description: 'Conferencia líder que reúne líderes farmacéuticos, innovadores en medicina digital y pioneros health tech.',
+      date: '2025-10-23',
+      type: 'event',
+      priority: 'medium',
+      category: 'Salud Digital',
+      status: 'upcoming',
+      impact: 'Evento clave para startups de salud digital para discutir IA, medicina basada en datos y tendencias regulatorias.',
+      source: 'Digital Health Conference Official'
+    },
+    {
+      id: '6',
+      title: 'MedTech Meets AI Conference Barcelona',
+      description: 'Conferencia especializada en intersección de dispositivos médicos, IA, diagnósticos e imaging con enfoque regulatorio.',
+      date: '2025-10-02',
+      type: 'event',
+      priority: 'high',
+      category: 'MedTech',
+      status: 'upcoming',
+      impact: 'Esencial para startups que desarrollan dispositivos médicos con IA, incluyendo discusiones sobre marcos regulatorios.',
+      source: 'MedTech Meets AI Official'
     },
     {
       id: '7',
-      title: 'Jornada AEMPS: IA en Dispositivos Médicos',
-      description: 'Jornada técnica sobre aplicación del MDR a dispositivos médicos con IA.',
-      date: '2025-07-18',
+      title: 'Health Tech Forward Barcelona',
+      description: 'Evento premier de innovación health tech con startups, inversores y líderes de la industria.',
+      date: '2025-12-03',
       type: 'event',
-      priority: 'high',
-      category: 'Regulatorio',
+      priority: 'medium',
+      category: 'HealthTech',
       status: 'upcoming',
-      impact: 'Orientación oficial sobre procedimientos de evaluación de conformidad.'
+      impact: 'Oportunidades extensas de networking para startups health tech y acceso a insights sobre tecnologías transformadoras.',
+      source: 'Health Tech Forward Official'
     },
     {
       id: '8',
-      title: 'Digital Services Act - Auditorías IA',
-      description: 'Inicio de auditorías obligatorias para plataformas que usen sistemas de recomendación con IA.',
-      date: '2025-02-17',
-      type: 'deadline',
-      priority: 'medium',
-      category: 'DSA',
+      title: 'EU AI Act - Implementación Sistemas Alto Riesgo',
+      description: 'Operadores de sistemas de IA de alto riesgo (biometría, infraestructura crítica, empleo) deben cumplir completamente.',
+      date: '2026-08-02',
+      type: 'regulation',
+      priority: 'high',
+      category: 'EU AI Act',
       status: 'upcoming',
-      impact: 'Afecta a plataformas digitales que procesan datos de usuarios europeos.'
+      impact: 'Sistemas de alto riesgo requieren evaluaciones de conformidad, documentación y auditorías externas potenciales.',
+      source: 'DataGuard & EU AI Act Implementation Timeline'
     }
   ];
 
