@@ -1260,9 +1260,14 @@ const TimelineComponent = () => {
                     <div className="text-xs font-medium text-slate-600 mb-1">
                       Impacto para startups:
                     </div>
-                    <div className="text-sm text-slate-700">
+                    <div className="text-sm text-slate-700 mb-2">
                       {event.impact}
                     </div>
+                    {event.source && (
+                      <div className="text-xs text-slate-500 italic">
+                        Fuente: {event.source}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
