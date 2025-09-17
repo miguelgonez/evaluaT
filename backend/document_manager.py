@@ -65,43 +65,49 @@ class DocumentManager:
             separators=["\n\n", "\n", ". ", " ", ""]
         )
         
-        # Document sources
+        # Real document sources with official URLs
         self.document_sources = {
             "EU_AI_ACT": {
                 "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32024R1689",
-                "title": "Reglamento de IA de la UE (EU AI Act)",
+                "title": "Regulation (EU) 2024/1689 - European AI Act",
                 "category": "ai_regulation",
-                "last_updated": None
+                "last_updated": None,
+                "description": "Official EU Artificial Intelligence Act - full regulation text"
             },
             "MDR": {
                 "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32017R0745",
-                "title": "Reglamento de Dispositivos Médicos (MDR)",
+                "title": "Regulation (EU) 2017/745 - Medical Device Regulation (MDR)",
                 "category": "medical_devices",
-                "last_updated": None
+                "last_updated": None,
+                "description": "Official EU Medical Device Regulation"
             },
             "GDPR": {
                 "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32016R0679",
-                "title": "Reglamento General de Protección de Datos (GDPR)",
+                "title": "Regulation (EU) 2016/679 - General Data Protection Regulation",
                 "category": "data_protection",
-                "last_updated": None
+                "last_updated": None,
+                "description": "Official EU GDPR regulation text"
             },
             "DGA": {
                 "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022R0868",
-                "title": "Ley de Gobernanza de Datos (DGA)",
+                "title": "Regulation (EU) 2022/868 - Data Governance Act",
                 "category": "data_governance",
-                "last_updated": None
+                "last_updated": None,
+                "description": "Official EU Data Governance Act"
             },
-            "LGS": {
-                "url": "https://www.boe.es/buscar/pdf/2006/BOE-A-2006-20551-consolidado.pdf",
-                "title": "Ley General de Sanidad",
+            "DATA_ACT": {
+                "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32023R2854",
+                "title": "Regulation (EU) 2023/2854 - Data Act",
+                "category": "data_sharing",
+                "last_updated": None,
+                "description": "Official EU Data Act on data sharing"
+            },
+            "LGS_SPAIN": {
+                "url": "https://www.boe.es/buscar/pdf/1986/BOE-A-1986-10499-consolidado.pdf",
+                "title": "Ley 14/1986 - Ley General de Sanidad (España)",
                 "category": "health_law",
-                "last_updated": None
-            },
-            "LEY_SEGUROS": {
-                "url": "https://www.boe.es/buscar/pdf/1980/BOE-A-1980-22501-consolidado.pdf",
-                "title": "Ley del Contrato de Seguro",
-                "category": "insurance_law",
-                "last_updated": None
+                "last_updated": None,
+                "description": "Spanish General Health Law - consolidated text"
             }
         }
     
