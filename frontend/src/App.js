@@ -2145,7 +2145,7 @@ const MainDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid md:grid-cols-5 gap-4">
+                  <div className="grid md:grid-cols-6 gap-4">
                     <Button onClick={() => setActiveTab('assessment')} className="h-20 flex-col">
                       <FileText className="h-6 w-6 mb-2" />
                       Nueva Evaluación
@@ -2157,6 +2157,10 @@ const MainDashboard = () => {
                     <Button onClick={() => setActiveTab('news')} variant="outline" className="h-20 flex-col">
                       <Newspaper className="h-6 w-6 mb-2" />
                       Ver Noticias
+                    </Button>
+                    <Button onClick={() => setActiveTab('articles')} variant="outline" className="h-20 flex-col">
+                      <PenTool className="h-6 w-6 mb-2" />
+                      Artículos
                     </Button>
                     <Button onClick={() => setActiveTab('docs')} variant="outline" className="h-20 flex-col">
                       <BookOpen className="h-6 w-6 mb-2" />
