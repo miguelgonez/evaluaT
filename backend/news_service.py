@@ -58,56 +58,67 @@ class NewsService:
         }
     
     async def scrape_eur_lex_news(self) -> List[Dict[str, Any]]:
-        """Scrape news from EUR-Lex"""
+        """Scrape real news from EUR-Lex"""
         news_items = []
         try:
-            # Search for AI-related legislation
-            search_url = "https://eur-lex.europa.eu/search.html?scope=EURLEX&text=artificial%20intelligence&lang=en&type=quick&qid=1704067200000"
+            # Real EUR-Lex search for AI-related legislation
+            search_urls = [
+                "https://eur-lex.europa.eu/search.html?scope=EURLEX&text=artificial%20intelligence&lang=en&type=quick&qid=1704067200000",
+                "https://eur-lex.europa.eu/search.html?scope=EURLEX&text=GDPR%20artificial%20intelligence&lang=en&type=quick",
+                "https://eur-lex.europa.eu/search.html?scope=EURLEX&text=medical%20devices%20AI&lang=en&type=quick"
+            ]
             
             headers = {
                 'User-Agent': 'Mozilla/5.0 (compatible; ComplianceNewsBot/1.0)'
             }
             
-            response = requests.get(search_url, headers=headers, timeout=30)
-            response.raise_for_status()
-            
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Look for recent legislation items
-            results = soup.find_all('div', class_='SearchResult')[:5]  # Get top 5 results
-            
-            for result in results:
+            for search_url in search_urls:
                 try:
-                    title_elem = result.find('a', class_='title')
-                    if not title_elem:
-                        continue
+                    response = requests.get(search_url, headers=headers, timeout=30)
+                    response.raise_for_status()
                     
-                    title = title_elem.get_text(strip=True)
-                    link = urljoin("https://eur-lex.europa.eu", title_elem.get('href', ''))
+                    soup = BeautifulSoup(response.content, 'html.parser')
                     
-                    # Get date if available
-                    date_elem = result.find('span', class_='date')
-                    date_str = date_elem.get_text(strip=True) if date_elem else None
+                    # Look for actual legislation items
+                    results = soup.find_all('div', class_='SearchResult')[:3]  # Top 3 per search
                     
-                    # Get summary
-                    summary_elem = result.find('div', class_='summary')
-                    summary = summary_elem.get_text(strip=True)[:300] if summary_elem else ""
-                    
-                    news_items.append({
-                        "title": title,
-                        "url": link,
-                        "summary": summary,
-                        "source": "EUR-Lex",
-                        "category": "regulation",
-                        "date_str": date_str,
-                        "language": "en"
-                    })
-                    
+                    for result in results:
+                        try:
+                            title_elem = result.find('a', class_='title')
+                            if not title_elem:
+                                continue
+                            
+                            title = title_elem.get_text(strip=True)
+                            link = urljoin("https://eur-lex.europa.eu", title_elem.get('href', ''))
+                            
+                            # Get date if available
+                            date_elem = result.find('span', class_='date')
+                            date_str = date_elem.get_text(strip=True) if date_elem else None
+                            
+                            # Get summary
+                            summary_elem = result.find('div', class_='summary')
+                            summary = summary_elem.get_text(strip=True)[:300] if summary_elem else ""
+                            
+                            news_items.append({
+                                "title": title,
+                                "url": link,
+                                "summary": summary,
+                                "source": "EUR-Lex",
+                                "category": "regulation",
+                                "date_str": date_str,
+                                "language": "en",
+                                "scraped_from": "official_source"
+                            })
+                            
+                        except Exception as e:
+                            logger.warning(f"Error parsing EUR-Lex result: {str(e)}")
+                            continue
+                
                 except Exception as e:
-                    logger.warning(f"Error parsing EUR-Lex result: {str(e)}")
+                    logger.warning(f"Error with search URL {search_url}: {str(e)}")
                     continue
             
-            logger.info(f"Scraped {len(news_items)} items from EUR-Lex")
+            logger.info(f"Scraped {len(news_items)} real items from EUR-Lex")
             
         except Exception as e:
             logger.error(f"Error scraping EUR-Lex: {str(e)}")
