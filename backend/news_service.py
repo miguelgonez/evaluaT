@@ -400,23 +400,28 @@ Responde en español y sé conciso pero informativo.
         return tags
     
     async def collect_all_news(self):
-        """Collect news from all sources"""
-        logger.info("Starting news collection from all sources")
+        """Collect news from all real sources"""
+        logger.info("Starting real news collection from official sources")
         
         all_news = []
         
-        # Collect from EUR-Lex
+        # Collect from EUR-Lex (real)
         eur_lex_news = await self.scrape_eur_lex_news()
         all_news.extend(eur_lex_news)
         
-        # Collect from BOE
+        # Collect from BOE (real)
         boe_news = await self.scrape_boe_news()
         all_news.extend(boe_news)
         
-        # Process and save all news
+        # Collect from AEMPS (real)
+        aemps_news = await self.scrape_aemps_news()
+        all_news.extend(aemps_news)
+        
+        # Process and save all real news
         await self.process_and_save_news(all_news)
         
-        logger.info(f"Completed news collection. Total items processed: {len(all_news)}")
+        logger.info(f"Completed real news collection. Total items processed: {len(all_news)}")
+        logger.info("Sources: EUR-Lex (EU regulations), BOE (Spanish official), AEMPS (Spanish medicines)")
     
     async def get_recent_news(self, limit: int = 20, category: Optional[str] = None, days: int = 30) -> List[Dict[str, Any]]:
         """Get recent news items"""
