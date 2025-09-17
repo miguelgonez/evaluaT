@@ -5,7 +5,7 @@ import time
 
 def register_user_and_get_token():
     """Register a user via API and get token"""
-    base_url = "https://insurtech-ai-eval.preview.emergentagent.com/api"
+    base_url = "https://compliai-saas.preview.emergentagent.com/api"
     
     user_data = {
         "email": f"dashboard_test_{int(time.time())}@test.com",
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         headers = {'Authorization': f'Bearer {token}'}
         try:
             dashboard_response = requests.get(
-                "https://insurtech-ai-eval.preview.emergentagent.com/api/dashboard/stats", 
+                "https://compliai-saas.preview.emergentagent.com/api/dashboard/stats", 
                 headers=headers, 
                 timeout=30
             )

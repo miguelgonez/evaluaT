@@ -6,7 +6,7 @@ import time
 
 def test_chat_system():
     """Test chat system functionality"""
-    base_url = "https://insurtech-ai-eval.preview.emergentagent.com/api"
+    base_url = "https://compliai-saas.preview.emergentagent.com/api"
     
     print("💬 Testing Chat System...")
     
@@ -94,7 +94,7 @@ def test_chat_system():
 
 def test_document_search():
     """Test document search without requiring embeddings"""
-    base_url = "https://insurtech-ai-eval.preview.emergentagent.com/api"
+    base_url = "https://compliai-saas.preview.emergentagent.com/api"
     
     print("\n📚 Testing Document Search...")
     
