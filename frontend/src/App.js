@@ -495,6 +495,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     { id: 'assessment', label: 'Autoevaluación', icon: FileText },
     { id: 'chat', label: 'Chat Inteligente', icon: MessageCircle },
     { id: 'news', label: 'Noticias', icon: Newspaper },
+    { id: 'articles', label: 'Artículos Técnicos', icon: PenTool },
     { id: 'docs', label: 'Documentos', icon: BookOpen },
     { id: 'timeline', label: 'Cronograma', icon: Clock }
   ];
