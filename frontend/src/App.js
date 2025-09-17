@@ -1845,7 +1845,7 @@ const DocumentsComponent = () => {
   const searchDocuments = async () => {
     if (!searchQuery.trim()) return;
 
-    setLoading(true);
+    setDocumentsLoading(true);
     try {
       const params = new URLSearchParams({
         query: searchQuery,
@@ -1861,7 +1861,7 @@ const DocumentsComponent = () => {
     } catch (error) {
       console.error('Error searching documents:', error);
     } finally {
-      setLoading(false);
+      setDocumentsLoading(false);
     }
   };
 
