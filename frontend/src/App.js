@@ -1295,7 +1295,7 @@ const TimelineComponent = () => {
 // Articles Component
 const ArticlesComponent = () => {
   const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [articlesLoading, setArticlesLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [filteredArticles, setFilteredArticles] = useState([]);
