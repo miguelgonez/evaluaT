@@ -1946,8 +1946,8 @@ const DocumentsComponent = () => {
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={searchDocuments} disabled={loading}>
-            {loading ? (
+          <Button onClick={searchDocuments} disabled={documentsLoading}>
+            {documentsLoading ? (
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
             ) : (
               <Search className="h-4 w-4" />
