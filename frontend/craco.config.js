@@ -12,6 +12,10 @@ module.exports = {
       '@': path.resolve(__dirname, 'src'),
     },
     configure: (webpackConfig) => {
+      // Disable ESLint
+      webpackConfig.plugins = webpackConfig.plugins.filter(plugin => {
+        return !(plugin.options && plugin.options.eslintPath);
+      });
       
       // Disable hot reload completely if environment variable is set
       if (config.disableHotReload) {
