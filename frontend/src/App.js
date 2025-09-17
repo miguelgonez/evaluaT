@@ -1866,14 +1866,14 @@ const DocumentsComponent = () => {
   };
 
   const refreshDocuments = async () => {
-    setLoading(true);
+    setDocumentsLoading(true);
     try {
       await axios.post(`${API}/documents/refresh`);
       await fetchStats();
     } catch (error) {
       console.error('Error refreshing documents:', error);
     } finally {
-      setLoading(false);
+      setDocumentsLoading(false);
     }
   };
 
