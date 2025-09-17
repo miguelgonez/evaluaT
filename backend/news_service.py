@@ -205,6 +205,87 @@ class NewsService:
         
         return news_items
     
+    async def scrape_aemps_news(self) -> List[Dict[str, Any]]:
+        """Scrape real news from AEMPS (Spanish Medicines Agency)"""
+        news_items = []
+        try:
+            # Real AEMPS news and updates URLs
+            aemps_urls = [
+                "https://www.aemps.gob.es/informa/notasInformativas/medicamentosUsoHumano/",
+                "https://www.aemps.gob.es/industria/uso-humano/productos-sanitarios-ps/",
+                "https://www.aemps.gob.es/informa/novedades/"
+            ]
+            
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (compatible; ComplianceNewsBot/1.0)',
+                'Accept-Language': 'es-ES,es;q=0.9'
+            }
+            
+            for url in aemps_urls:
+                try:
+                    response = requests.get(url, headers=headers, timeout=30)
+                    response.raise_for_status()
+                    
+                    soup = BeautifulSoup(response.content, 'html.parser')
+                    
+                    # Look for news items, updates, or announcements
+                    # AEMPS typically has news in article or list formats
+                    articles = soup.find_all(['article', 'div'], class_=['noticia', 'news-item', 'listado-item'])[:3]
+                    
+                    for article in articles:
+                        try:
+                            # Find title
+                            title_elem = article.find(['h2', 'h3', 'h4', 'a'])
+                            if not title_elem:
+                                continue
+                            
+                            title = title_elem.get_text(strip=True)
+                            
+                            # Find link
+                            link_elem = article.find('a')
+                            if link_elem:
+                                link = urljoin("https://www.aemps.gob.es", link_elem.get('href', ''))
+                            else:
+                                link = url
+                            
+                            # Find summary/content
+                            summary_elem = article.find(['p', 'div'], class_=['resumen', 'summary', 'content'])
+                            summary = summary_elem.get_text(strip=True)[:300] if summary_elem else title[:200]
+                            
+                            # Find date
+                            date_elem = article.find(['span', 'time', 'div'], class_=['fecha', 'date'])
+                            date_str = date_elem.get_text(strip=True) if date_elem else None
+                            
+                            # Filter for AI/tech related content
+                            if any(keyword in title.lower() or keyword in summary.lower() 
+                                  for keyword in ['inteligencia artificial', 'digital', 'software', 'algoritmo', 'tecnolog']):
+                                
+                                news_items.append({
+                                    "title": title,
+                                    "url": link,
+                                    "summary": summary,
+                                    "source": "AEMPS",
+                                    "category": "regulation",
+                                    "language": "es",
+                                    "date_str": date_str,
+                                    "scraped_from": "official_source"
+                                })
+                            
+                        except Exception as e:
+                            logger.warning(f"Error parsing AEMPS article: {str(e)}")
+                            continue
+                
+                except Exception as e:
+                    logger.warning(f"Error with AEMPS URL {url}: {str(e)}")
+                    continue
+            
+            logger.info(f"Scraped {len(news_items)} real items from AEMPS")
+            
+        except Exception as e:
+            logger.error(f"Error scraping AEMPS: {str(e)}")
+        
+        return news_items
+    
     async def generate_news_summary(self, news_item: Dict[str, Any]) -> str:
         """Generate AI summary for news item"""
         try:
