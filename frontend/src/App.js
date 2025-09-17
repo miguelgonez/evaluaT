@@ -1598,7 +1598,7 @@ Pueden clasificarse como **alto riesgo** bajo el Anexo III del AI Act.
     setTimeout(() => {
       setArticles(technicalArticles);
       setFilteredArticles(technicalArticles);
-      setLoading(false);
+      setArticlesLoading(false);
     }, 1000);
   }, []);
 
