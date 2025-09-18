@@ -583,7 +583,7 @@ const ChatComponent = () => {
   const sendMessage = async () => {
     if (!newMessage.trim() || !currentSession) return;
 
-    setLoading(true);
+    setChatLoading(true);
     try {
       const response = await axios.post(`${API}/chat/sessions/${currentSession}/messages`, {
         message: newMessage,
