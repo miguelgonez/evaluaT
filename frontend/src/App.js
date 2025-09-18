@@ -2070,7 +2070,6 @@ const DocumentsComponent = () => {
             </CardContent>
           </Card>
         </div>
-      )}
     </div>
   );
 };
