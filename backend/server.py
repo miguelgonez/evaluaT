@@ -91,6 +91,27 @@ class ChatMessageCreate(BaseModel):
 class ChatSessionCreate(BaseModel):
     title: Optional[str] = None
 
+# Admin models
+class AdminLogin(BaseModel):
+    username: str
+    password: str
+
+class AdminUpdateRequest(BaseModel):
+    update_type: str = "all"  # "all", "documents", "news", "articles", "rag"
+
+class DocumentMetadata(BaseModel):
+    id: int
+    title: str
+    url: str
+    source: str
+    document_type: str
+    summary_es: str
+    keywords: str
+    publication_date: str
+    last_updated: str
+    category: str
+    relevance_score: float
+
 # Helper functions
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
