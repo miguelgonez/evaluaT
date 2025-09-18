@@ -375,13 +375,13 @@ const AuthComponent = () => {
     company_name: '',
     company_type: 'digital_health'
   });
-  const [loading, setLoading] = useState(false);
+  const [authFormLoading, setAuthFormLoading] = useState(false);
   const [error, setError] = useState('');
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setAuthFormLoading(true);
     setError('');
 
     try {
@@ -395,7 +395,7 @@ const AuthComponent = () => {
     } catch (err) {
       setError(err.response?.data?.detail || 'Error en autenticación');
     } finally {
-      setLoading(false);
+      setAuthFormLoading(false);
     }
   };
 
