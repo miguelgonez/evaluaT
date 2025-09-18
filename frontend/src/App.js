@@ -776,7 +776,7 @@ const ChatComponent = () => {
 // News Component
 const NewsComponent = () => {
   const [news, setNews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [newsLoading, setNewsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState('all');
 
