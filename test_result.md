@@ -136,6 +136,18 @@ frontend:
         -agent: "main"
         -comment: "Fixed by creating simplified version of the app with clean component structure"
 
+  - task: "Implement Artículos Técnicos section"
+    implemented: true
+    working: true
+    file: "SimpleApp.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "Technical Articles section successfully integrated and visible in dashboard"
+
   - task: "Demo navigation functionality"
     implemented: true
     working: true
