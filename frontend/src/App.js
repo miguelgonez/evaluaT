@@ -965,7 +965,7 @@ const NewsComponent = () => {
 // Timeline Component
 const TimelineComponent = () => {
   const [timelineEvents, setTimelineEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [timelineLoading, setTimelineLoading] = useState(true);
   const [filterType, setFilterType] = useState('all');
 
   // Real timeline data based on verified sources
