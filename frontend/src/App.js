@@ -2352,11 +2352,18 @@ const MainDashboard = () => {
         <header className="bg-white border-b border-slate-200">
           <div className="px-6 py-4 flex justify-between items-center">
             <div className="text-sm text-slate-600">
-              {user?.company_type === 'digital_health' ? 'Salud Digital' : 'Insurtech'} | {user?.email}
+              {currentUser?.company_type === 'digital_health' ? 'Salud Digital' : 'Insurtech'} | {currentUser?.email}
             </div>
-            <Button variant="outline" onClick={logout}>
-              Cerrar Sesión
-            </Button>
+            {!isDemo && (
+              <Button variant="outline" onClick={logout}>
+                Cerrar Sesión
+              </Button>
+            )}
+            {isDemo && (
+              <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                Modo Demo
+              </span>
+            )}
           </div>
         </header>
         
