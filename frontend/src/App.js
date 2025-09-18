@@ -522,7 +522,9 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 key={item.id}
                 onClick={() => {
                   console.log('Sidebar clicked:', item.id);
+                  console.log('Setting activeTab to:', item.id);
                   setActiveTab(item.id);
+                  console.log('setActiveTab called for:', item.id);
                 }}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
                   activeTab === item.id 
