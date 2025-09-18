@@ -310,6 +310,103 @@ class AdminService:
         
         return news_items
 
+    def get_iso_standards_for_context(self) -> List[Dict]:
+        """Obtener normas ISO relevantes para salud digital e insurtech"""
+        iso_standards = [
+            {
+                'title': 'ISO 13485:2016 - Dispositivos médicos - Sistemas de gestión de la calidad',
+                'url': 'https://www.iso.org/standard/59752.html',
+                'source': 'ISO International',
+                'document_type': 'iso_standard',
+                'category': 'normativo_iso',
+                'keywords': 'dispositivos médicos, gestión calidad, certificación, salud digital',
+                'summary_es': 'Norma internacional que especifica los requisitos para un sistema de gestión de calidad cuando una organización necesita demostrar su capacidad de proporcionar dispositivos médicos y servicios relacionados que cumplan consistentemente con los requisitos del cliente y los requisitos reglamentarios aplicables.',
+                'publication_date': '2016-03-01'
+            },
+            {
+                'title': 'ISO 14971:2019 - Dispositivos médicos - Aplicación de la gestión de riesgos',
+                'url': 'https://www.iso.org/standard/72704.html',
+                'source': 'ISO International',
+                'document_type': 'iso_standard',
+                'category': 'normativo_iso',
+                'keywords': 'gestión riesgos, dispositivos médicos, análisis riesgo, seguridad',
+                'summary_es': 'Norma que especifica una metodología para la gestión de riesgos de dispositivos médicos, incluyendo software y sistemas de inteligencia artificial médica. Define procesos para la identificación de peligros, estimación y evaluación de riesgos, control de riesgos y monitoreo.',
+                'publication_date': '2019-12-01'
+            },
+            {
+                'title': 'ISO 27001:2022 - Tecnología de la información - Gestión de la seguridad de la información',
+                'url': 'https://www.iso.org/standard/82875.html',
+                'source': 'ISO International',
+                'document_type': 'iso_standard',
+                'category': 'normativo_iso',
+                'keywords': 'seguridad información, SGSI, ciberseguridad, protección datos',
+                'summary_es': 'Norma internacional para sistemas de gestión de seguridad de la información (SGSI). Esencial para empresas de salud digital e insurtech que manejan datos sensibles. Define controles de seguridad, gestión de riesgos de seguridad y procesos de certificación.',
+                'publication_date': '2022-10-01'
+            },
+            {
+                'title': 'ISO 62304:2006 - Software de dispositivos médicos - Procesos del ciclo de vida del software',
+                'url': 'https://www.iso.org/standard/38421.html',
+                'source': 'ISO International',
+                'document_type': 'iso_standard',
+                'category': 'normativo_iso',
+                'keywords': 'software médico, ciclo vida software, desarrollo software, dispositivos médicos',
+                'summary_es': 'Norma que define los procesos del ciclo de vida para el desarrollo de software de dispositivos médicos y software que es un dispositivo médico. Crucial para startups de salud digital que desarrollan aplicaciones médicas o software con IA médica.',
+                'publication_date': '2006-05-01'
+            },
+            {
+                'title': 'ISO 82304-1:2016 - Software sanitario - Parte 1: Requisitos generales para la seguridad del producto',
+                'url': 'https://www.iso.org/standard/59543.html',
+                'source': 'ISO International',
+                'document_type': 'iso_standard',
+                'category': 'normativo_iso',
+                'keywords': 'software sanitario, aplicaciones salud, seguridad producto, apps médicas',
+                'summary_es': 'Norma específica para software sanitario como aplicaciones móviles de salud, plataformas de telemedicina y sistemas de monitoreo. Define requisitos de seguridad, usabilidad y gestión de riesgos para software independiente de salud.',
+                'publication_date': '2016-10-01'
+            },
+            {
+                'title': 'ISO 27799:2016 - Informática sanitaria - Gestión de la seguridad de la información sanitaria',
+                'url': 'https://www.iso.org/standard/62777.html',
+                'source': 'ISO International',
+                'document_type': 'iso_standard',
+                'category': 'normativo_iso',
+                'keywords': 'seguridad información sanitaria, datos salud, privacidad pacientes, GDPR salud',
+                'summary_es': 'Norma específica para la gestión de seguridad de información sanitaria. Complementa ISO 27001 con requisitos específicos para el sector salud, incluyendo protección de datos de pacientes, historiales médicos y sistemas de información hospitalaria.',
+                'publication_date': '2016-08-01'
+            },
+            {
+                'title': 'ISO 9001:2015 - Sistemas de gestión de la calidad - Requisitos',
+                'url': 'https://www.iso.org/standard/62085.html',
+                'source': 'ISO International',
+                'document_type': 'iso_standard',
+                'category': 'normativo_iso',
+                'keywords': 'gestión calidad, procesos, mejora continua, certificación calidad',
+                'summary_es': 'Norma fundamental de gestión de calidad aplicable a cualquier organización. Para startups de salud digital e insurtech, proporciona el marco base para sistemas de gestión que pueden complementar normas específicas como ISO 13485.',
+                'publication_date': '2015-09-01'
+            },
+            {
+                'title': 'ISO 23053:2022 - Marco para sistemas de inteligencia artificial confiables',
+                'url': 'https://www.iso.org/standard/74438.html',
+                'source': 'ISO International',
+                'document_type': 'iso_standard',
+                'category': 'normativo_iso',
+                'keywords': 'inteligencia artificial, IA confiable, ética IA, sistemas IA',
+                'summary_es': 'Norma nueva que establece un marco para el desarrollo y implementación de sistemas de IA confiables. Complementa el EU AI Act con principios de transparencia, explicabilidad, robustez y gobierno de datos para sistemas de IA.',
+                'publication_date': '2022-06-01'
+            },
+            {
+                'title': 'ISO 31000:2018 - Gestión del riesgo - Principios y directrices',
+                'url': 'https://www.iso.org/standard/65694.html',
+                'source': 'ISO International',
+                'document_type': 'iso_standard',
+                'category': 'normativo_iso',
+                'keywords': 'gestión riesgo, análisis riesgo, marco riesgo, evaluación riesgo',
+                'summary_es': 'Norma general de gestión de riesgos aplicable a todos los sectores. Para empresas de salud digital e insurtech, proporciona el marco conceptual para identificar, analizar y tratar riesgos operacionales, tecnológicos y regulatorios.',
+                'publication_date': '2018-02-01'
+            }
+        ]
+        
+        return iso_standards
+
     def _scrape_expert_source(self, source: Dict) -> List[Dict]:
         """Scraping específico para documentos expertos"""
         articles = []
