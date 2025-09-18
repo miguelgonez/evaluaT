@@ -2511,7 +2511,7 @@ const MainDashboard = () => {
     );
   };
 
-  const renderContent = () => {
+  const renderContent = useCallback(() => {
     console.log('renderContent called with activeTab:', activeTab);
     switch (activeTab) {
       case 'dashboard':
