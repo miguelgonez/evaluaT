@@ -2167,10 +2167,10 @@ const MainDashboard = () => {
             {/* Welcome Header */}
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-slate-900">
-                Bienvenido, {user?.company_name}
+                Bienvenido, {currentUser?.company_name}
               </h1>
               <p className="text-slate-600 mt-2">
-                Panel de control de cumplimiento normativo para {user?.company_type === 'digital_health' ? 'salud digital' : 'insurtech'}
+                Panel de control de cumplimiento normativo para {currentUser?.company_type === 'digital_health' ? 'salud digital' : 'insurtech'}
               </p>
             </div>
 
