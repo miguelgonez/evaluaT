@@ -1,5 +1,6 @@
 import os
 import uuid
+import re
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
 import logging
@@ -20,21 +21,63 @@ class ChatService:
         # Initialize LLM chat with system message
         self.system_message = """Eres un asistente especializado en cumplimiento normativo para startups de salud digital e insurtech en España. Tu función es ayudar con consultas sobre:
 
-1. **Reglamento de IA de la UE (EU AI Act)**: Clasificación de riesgos, requisitos de cumplimiento, evaluación de conformidad
-2. **Reglamento de Dispositivos Médicos (MDR)**: Requisitos para dispositivos médicos con IA
-3. **GDPR**: Protección de datos personales y requisitos de privacidad
-4. **Ley de Gobernanza de Datos (DGA)**: Intercambio y reutilización de datos
-5. **Ley General de Sanidad**: Normativas sanitarias españolas
-6. **Ley del Contrato de Seguro**: Regulaciones de seguros
+1. Reglamento de IA de la UE (EU AI Act): Clasificación de riesgos, requisitos de cumplimiento, evaluación de conformidad
+2. Reglamento de Dispositivos Médicos (MDR): Requisitos para dispositivos médicos con IA
+3. GDPR: Protección de datos personales y requisitos de privacidad
+4. Ley de Gobernanza de Datos (DGA): Intercambio y reutilización de datos
+5. Ley General de Sanidad: Normativas sanitarias españolas
+6. Ley del Contrato de Seguro: Regulaciones de seguros
 
-**Instrucciones:**
+INSTRUCCIONES IMPORTANTES:
 - Proporciona respuestas precisas y basadas en la documentación oficial
 - Usa ejemplos específicos para startups de salud digital e insurtech
 - Incluye referencias a artículos específicos cuando sea relevante
 - Ofrece recomendaciones prácticas y pasos específicos
 - Si no tienes información suficiente, indícalo claramente
 - Responde siempre en español
+- NO uses formato markdown (asteriscos, almohadillas, guiones para listas)
+- Usa texto plano con numeración simple: 1., 2., 3.
+- Para énfasis usa MAYÚSCULAS en lugar de negritas
+- Para separar secciones usa líneas en blanco, no títulos con #
 """
+    
+    def clean_markdown_response(self, text: str) -> str:
+        """Elimina formato markdown de las respuestas del AI"""
+        if not text:
+            return text
+            
+        # Eliminar títulos con # (convertir a texto normal)
+        text = re.sub(r'^#{1,6}\s*(.+)$', r'\1', text, flags=re.MULTILINE)
+        
+        # Eliminar negritas y cursivas (** y *)
+        text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)  # Negritas
+        text = re.sub(r'\*(.+?)\*', r'\1', text)      # Cursivas
+        
+        # Convertir listas con guiones a numeradas
+        lines = text.split('\n')
+        cleaned_lines = []
+        list_counter = 1
+        
+        for line in lines:
+            # Convertir listas con - a numeradas
+            if re.match(r'^-\s+(.+)', line):
+                content = re.sub(r'^-\s+(.+)', r'\1', line)
+                cleaned_lines.append(f"{list_counter}. {content}")
+                list_counter += 1
+            else:
+                cleaned_lines.append(line)
+                # Reset counter si no es una lista
+                if line.strip() and not re.match(r'^-\s+(.+)', line):
+                    list_counter = 1
+        
+        text = '\n'.join(cleaned_lines)
+        
+        # Eliminar otros caracteres markdown comunes
+        text = re.sub(r'`(.+?)`', r'\1', text)        # Código inline
+        text = re.sub(r'```[\s\S]*?```', '', text)    # Bloques de código
+        text = re.sub(r'\[(.+?)\]\(.+?\)', r'\1', text)  # Enlaces
+        
+        return text.strip()
     
     async def create_chat_session(self, user_id: str, title: Optional[str] = None) -> str:
         """Create a new chat session"""
