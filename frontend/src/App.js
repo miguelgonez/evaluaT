@@ -838,7 +838,7 @@ const NewsComponent = () => {
     } catch (error) {
       console.error('Error refreshing news:', error);
     } finally {
-      setLoading(false);
+      setNewsLoading(false);
     }
   };
 
