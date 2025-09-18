@@ -1943,7 +1943,7 @@ const RepositoryComponent = () => {
           'news': 12
         }
       });
-      setLoading(false);
+      setRepositoryLoading(false);
     } else {
       fetchRepositoryData();
     }
