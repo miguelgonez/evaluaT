@@ -18,6 +18,7 @@ from passlib.context import CryptContext
 from document_manager import document_manager, initialize_documents, start_scheduler
 from chat_service import ChatService
 from news_service import NewsService, start_news_scheduler
+from admin_service import admin_service
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
