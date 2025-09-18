@@ -212,8 +212,12 @@ class AdminService:
             }
         ]
         
+        # Agregar normas ISO relevantes
+        iso_standards = self.get_iso_standards_for_context()
+        
         articles_updated = 0
         
+        # Procesar fuentes expertas existentes
         for source in expert_sources:
             try:
                 articles = self._scrape_expert_source(source)
@@ -222,6 +226,14 @@ class AdminService:
                         articles_updated += 1
             except Exception as e:
                 logger.error(f"Error updating from {source['name']}: {str(e)}")
+        
+        # Procesar normas ISO
+        for iso_standard in iso_standards:
+            try:
+                if self._add_document_to_db(iso_standard):
+                    articles_updated += 1
+            except Exception as e:
+                logger.error(f"Error adding ISO standard {iso_standard['title']}: {str(e)}")
         
         return articles_updated
 
