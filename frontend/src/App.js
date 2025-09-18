@@ -1072,7 +1072,7 @@ const TimelineComponent = () => {
     // Simulate loading
     setTimeout(() => {
       setTimelineEvents(sampleEvents);
-      setLoading(false);
+      setTimelineLoading(false);
     }, 1000);
   }, []);
 
