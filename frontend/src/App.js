@@ -2702,6 +2702,11 @@ const MainDashboard = () => {
     }
   }, [activeTab]);
 
+  // Monitor activeTab changes for debugging
+  useEffect(() => {
+    console.log('activeTab changed to:', activeTab);
+  }, [activeTab]);
+
   return (
     <div className="min-h-screen bg-slate-50 flex">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
