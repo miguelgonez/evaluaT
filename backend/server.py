@@ -475,6 +475,189 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# =============================================================================
+# ADMIN ROUTES
+# =============================================================================
+
+@app.post("/api/admin/login")
+async def admin_login(credentials: AdminLogin):
+    """Autenticación de administrador"""
+    try:
+        if admin_service.authenticate_admin(credentials.username, credentials.password):
+            # Crear token admin (simple, sin expiración para demo)
+            admin_token = jwt.encode(
+                {"user": "admin", "role": "admin"}, 
+                SECRET_KEY, 
+                algorithm=ALGORITHM
+            )
+            return {
+                "message": "Admin authenticated successfully",
+                "access_token": admin_token,
+                "token_type": "bearer",
+                "role": "admin"
+            }
+        else:
+            raise HTTPException(status_code=401, detail="Invalid admin credentials")
+    except Exception as e:
+        logger.error(f"Admin login error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Admin login failed")
+
+@app.get("/api/admin/dashboard")
+async def admin_dashboard():
+    """Dashboard de administración con estadísticas"""
+    try:
+        # Obtener estadísticas generales
+        documents = admin_service.get_documents_metadata(limit=10)
+        logs = admin_service.get_update_logs(limit=10)
+        
+        # Estadísticas de la base de datos
+        total_users = await db.users.count_documents({})
+        total_assessments = await db.assessments.count_documents({})
+        total_chat_sessions = await db.chat_sessions.count_documents({})
+        
+        return {
+            "stats": {
+                "total_users": total_users,
+                "total_assessments": total_assessments,
+                "total_chat_sessions": total_chat_sessions,
+                "total_documents": len(documents),
+                "last_update": logs[0]['timestamp'] if logs else None
+            },
+            "recent_documents": documents[:5],
+            "recent_logs": logs[:5]
+        }
+        
+    except Exception as e:
+        logger.error(f"Admin dashboard error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error loading admin dashboard")
+
+@app.post("/api/admin/update")
+async def manual_update(request: AdminUpdateRequest):
+    """Ejecutar actualización manual"""
+    try:
+        result = admin_service.manual_update(request.update_type)
+        return {
+            "message": "Manual update completed",
+            "result": result
+        }
+    except Exception as e:
+        logger.error(f"Manual update error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Manual update failed")
+
+@app.get("/api/admin/logs")
+async def get_update_logs(limit: int = 50):
+    """Obtener logs de actualizaciones"""
+    try:
+        logs = admin_service.get_update_logs(limit)
+        return {"logs": logs}
+    except Exception as e:
+        logger.error(f"Get logs error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error retrieving logs")
+
+@app.get("/api/admin/documents")
+async def get_documents_admin(limit: int = 100, category: str = None):
+    """Obtener documentos para administración"""
+    try:
+        documents = admin_service.get_documents_metadata(limit, category)
+        return {"documents": documents}
+    except Exception as e:
+        logger.error(f"Get admin documents error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error retrieving documents")
+
+# =============================================================================
+# REPOSITORY ROUTES (Para usuarios finales)
+# =============================================================================
+
+@app.get("/api/repository/documents")
+async def get_repository_documents(
+    limit: int = 50, 
+    category: str = None, 
+    search: str = None,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Obtener documentos del repositorio para usuarios"""
+    try:
+        # Verificar token de usuario
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        
+        documents = admin_service.get_documents_metadata(limit, category)
+        
+        # Filtrar por búsqueda si se proporciona
+        if search:
+            search_lower = search.lower()
+            documents = [
+                doc for doc in documents 
+                if search_lower in doc['title'].lower() or 
+                   search_lower in doc['summary_es'].lower() or
+                   search_lower in doc['keywords'].lower()
+            ]
+        
+        return {
+            "documents": documents,
+            "total": len(documents)
+        }
+        
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        logger.error(f"Repository documents error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error retrieving repository documents")
+
+@app.get("/api/repository/categories")
+async def get_repository_categories(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Obtener categorías disponibles en el repositorio"""
+    try:
+        # Verificar token
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        
+        documents = admin_service.get_documents_metadata(1000)  # Obtener muchos para categorías
+        categories = list(set(doc['category'] for doc in documents if doc['category']))
+        
+        return {"categories": sorted(categories)}
+        
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        logger.error(f"Repository categories error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error retrieving categories")
+
+@app.get("/api/repository/stats")
+async def get_repository_stats(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Obtener estadísticas del repositorio"""
+    try:
+        # Verificar token
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        
+        documents = admin_service.get_documents_metadata(1000)
+        
+        # Contar por categorías
+        category_counts = {}
+        for doc in documents:
+            category = doc['category'] or 'sin_categoria'
+            category_counts[category] = category_counts.get(category, 0) + 1
+        
+        # Contar por tipos
+        type_counts = {}
+        for doc in documents:
+            doc_type = doc['document_type'] or 'desconocido'
+            type_counts[doc_type] = type_counts.get(doc_type, 0) + 1
+        
+        return {
+            "total_documents": len(documents),
+            "categories": category_counts,
+            "document_types": type_counts,
+            "last_updated": max(doc['last_updated'] for doc in documents) if documents else None
+        }
+        
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        logger.error(f"Repository stats error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error retrieving repository stats")
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
