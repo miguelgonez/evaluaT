@@ -595,7 +595,7 @@ const ChatComponent = () => {
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
-      setLoading(false);
+      setChatLoading(false);
     }
   };
 
