@@ -72,7 +72,7 @@ const AuthProvider = ({ children }) => {
       }
     }
     
-    setLoading(false);
+    setAuthLoading(false);
   }, [token]);
 
   const login = (userData, authToken) => {
