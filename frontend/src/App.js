@@ -2552,7 +2552,10 @@ const MainDashboard = () => {
                       <PenTool className="h-6 w-6 mb-2" />
                       Artículos
                     </Button>
-                    <Button onClick={() => setActiveTab('docs')} variant="outline" className="h-20 flex-col">
+                    <Button onClick={() => {
+                      console.log('Documentos button clicked - setting activeTab to docs');
+                      setActiveTab('docs');
+                    }} variant="outline" className="h-20 flex-col">
                       <BookOpen className="h-6 w-6 mb-2" />
                       Documentos
                     </Button>
