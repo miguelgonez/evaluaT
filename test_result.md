@@ -136,17 +136,20 @@ frontend:
         -agent: "main"
         -comment: "Fixed by creating simplified version of the app with clean component structure"
 
-  - task: "Implement Artículos Técnicos section"
+  - task: "Demo navigation functionality"
     implemented: true
     working: true
-    file: "SimpleApp.js"
+    file: "App.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
+        -working: false
+        -agent: "testing"
+        -comment: "CRITICAL BUG: Demo navigation completely broken - 'Ver Demo' button missing onClick handler, preventing access to demo dashboard"
         -working: true
-        -agent: "main"
-        -comment: "Technical Articles section successfully integrated and visible in dashboard"
+        -agent: "testing"
+        -comment: "FIXED: Added onClick={() => window.location.href = '/demo'} to 'Ver Demo' button. Comprehensive testing completed: ✅ Demo access working, ✅ Sidebar navigation working, ✅ Content switching working for all sections (Dashboard, Chat Inteligente, Documentos, Repositorio). Navigation functionality fully operational."
 
 metadata:
   created_by: "main_agent"
