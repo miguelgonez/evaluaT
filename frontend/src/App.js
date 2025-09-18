@@ -497,6 +497,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     { id: 'news', label: 'Noticias', icon: Newspaper },
     { id: 'articles', label: 'Artículos Técnicos', icon: PenTool },
     { id: 'docs', label: 'Documentos', icon: BookOpen },
+    { id: 'repository', label: 'Repositorio', icon: Database },
     { id: 'timeline', label: 'Cronograma', icon: Clock }
   ];
 
