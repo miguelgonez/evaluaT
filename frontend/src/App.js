@@ -541,7 +541,7 @@ const ChatComponent = () => {
   const [currentSession, setCurrentSession] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [chatLoading, setChatLoading] = useState(false);
   const [category, setCategory] = useState('all');
 
   useEffect(() => {
