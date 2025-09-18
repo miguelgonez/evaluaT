@@ -801,14 +801,14 @@ const NewsComponent = () => {
       return;
     }
 
-    setLoading(true);
+    setNewsLoading(true);
     try {
       const response = await axios.get(`${API}/news/search?query=${encodeURIComponent(searchQuery)}`);
       setNews(response.data.results);
     } catch (error) {
       console.error('Error searching news:', error);
     } finally {
-      setLoading(false);
+      setNewsLoading(false);
     }
   };
 
