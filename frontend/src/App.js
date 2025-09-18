@@ -192,7 +192,7 @@ const LandingPage = () => {
                   Evaluar Ahora
                   <Shield className="ml-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" onClick={() => window.location.href = '/demo'}>
                   Ver Demo
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
