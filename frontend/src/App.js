@@ -3051,6 +3051,8 @@ function App() {
           <Route path="/dashboard" element={<MainDashboard />} />
           {/* Force dashboard to show for demo */}
           <Route path="/demo" element={<MainDashboard />} />
+          {/* Admin panel route */}
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </BrowserRouter>
     </div>
