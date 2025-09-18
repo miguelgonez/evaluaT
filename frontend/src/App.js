@@ -731,10 +731,10 @@ const ChatComponent = () => {
                   />
                   <Button
                     onClick={sendMessage}
-                    disabled={loading || !newMessage.trim()}
+                    disabled={chatLoading || !newMessage.trim()}
                     size="lg"
                   >
-                    {loading ? (
+                    {chatLoading ? (
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                     ) : (
                       <Send className="h-4 w-4" />
