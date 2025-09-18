@@ -27,6 +27,16 @@ class ChatService:
 4. Ley de Gobernanza de Datos (DGA): Intercambio y reutilización de datos
 5. Ley General de Sanidad: Normativas sanitarias españolas
 6. Ley del Contrato de Seguro: Regulaciones de seguros
+7. Normas ISO relevantes:
+   - ISO 13485: Gestión de calidad para dispositivos médicos
+   - ISO 14971: Gestión de riesgos en dispositivos médicos
+   - ISO 27001: Seguridad de la información
+   - ISO 62304: Software de dispositivos médicos
+   - ISO 82304-1: Software sanitario
+   - ISO 27799: Seguridad de información sanitaria
+   - ISO 9001: Gestión de calidad general
+   - ISO 23053: Inteligencia artificial confiable
+   - ISO 31000: Gestión de riesgos
 
 INSTRUCCIONES IMPORTANTES:
 - Proporciona respuestas precisas y basadas en la documentación oficial
