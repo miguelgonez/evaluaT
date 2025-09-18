@@ -2149,7 +2149,7 @@ const RepositoryComponent = () => {
         ))}
       </div>
 
-      {documents.length === 0 && !loading && (
+      {documents.length === 0 && !repositoryLoading && (
         <div className="text-center py-12">
           <BookOpen className="h-12 w-12 text-slate-400 mx-auto mb-4" />
           <div className="text-slate-500 text-lg">No se encontraron documentos</div>
