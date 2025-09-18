@@ -791,7 +791,7 @@ const NewsComponent = () => {
     } catch (error) {
       console.error('Error fetching news:', error);
     } finally {
-      setLoading(false);
+      setNewsLoading(false);
     }
   };
 
