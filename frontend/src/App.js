@@ -1872,6 +1872,291 @@ Pueden clasificarse como **alto riesgo** bajo el Anexo III del AI Act.
   );
 };
 
+// Repository Component
+const RepositoryComponent = () => {
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [categories, setCategories] = useState([]);
+  const [stats, setStats] = useState(null);
+
+  const isDemo = window.location.pathname === '/demo';
+
+  useEffect(() => {
+    if (isDemo) {
+      // Demo data
+      setDocuments([
+        {
+          id: 1,
+          title: 'Guía de Implementación del EU AI Act para Startups de Salud Digital',
+          url: 'https://example.com/eu-ai-act-guide',
+          source: 'McKinsey Digital Health',
+          document_type: 'expert_document',
+          summary_es: 'Guía completa para implementar los requisitos del EU AI Act en startups de salud digital, incluyendo evaluación de riesgos, documentación técnica y procedimientos de cumplimiento.',
+          keywords: 'EU AI Act, salud digital, cumplimiento, startups',
+          publication_date: '2024-12-01',
+          category: 'experto_consultancy',
+          relevance_score: 9.2
+        },
+        {
+          id: 2,
+          title: 'Análisis del Impacto del GDPR en Tecnologías de Seguros',
+          url: 'https://example.com/gdpr-insurtech-analysis',
+          source: 'Deloitte Legal Tech',
+          document_type: 'expert_document',
+          summary_es: 'Análisis exhaustivo de cómo el GDPR afecta a las empresas insurtech, incluyendo casos de uso específicos, mejores prácticas y recomendaciones de implementación.',
+          keywords: 'GDPR, insurtech, protección de datos, cumplimiento',
+          publication_date: '2024-11-15',
+          category: 'experto_consultancy',
+          relevance_score: 8.7
+        },
+        {
+          id: 3,
+          title: 'Reglamento de Dispositivos Médicos: Software como Dispositivo Médico',
+          url: 'https://example.com/mdr-software-guide',
+          source: 'European Commission Digital Health',
+          document_type: 'regulatory',
+          summary_es: 'Documento oficial que explica cómo clasificar y regular el software como dispositivo médico bajo el nuevo Reglamento de Dispositivos Médicos (MDR).',
+          keywords: 'MDR, software médico, dispositivos médicos, regulación',
+          publication_date: '2024-10-20',
+          category: 'normativo',
+          relevance_score: 9.5
+        }
+      ]);
+      
+      setCategories(['normativo', 'experto_consultancy', 'experto_institution']);
+      setStats({
+        total_documents: 127,
+        categories: {
+          'normativo': 45,
+          'experto_consultancy': 38,
+          'experto_institution': 32,
+          'noticia': 12
+        },
+        document_types: {
+          'regulatory': 45,
+          'expert_document': 70,
+          'news': 12
+        }
+      });
+      setLoading(false);
+    } else {
+      fetchRepositoryData();
+    }
+  }, [isDemo]);
+
+  const fetchRepositoryData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+
+      const [docsResponse, categoriesResponse, statsResponse] = await Promise.all([
+        axios.get(`${API}/repository/documents?limit=50&category=${selectedCategory}`, { headers }),
+        axios.get(`${API}/repository/categories`, { headers }),
+        axios.get(`${API}/repository/stats`, { headers })
+      ]);
+
+      setDocuments(docsResponse.data.documents);
+      setCategories(categoriesResponse.data.categories);
+      setStats(statsResponse.data);
+    } catch (error) {
+      console.error('Error fetching repository data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchDocuments = () => {
+    if (isDemo) {
+      const filtered = documents.filter(doc =>
+        doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doc.summary_es.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doc.keywords.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setDocuments(filtered);
+    } else {
+      fetchRepositoryData();
+    }
+  };
+
+  const getCategoryName = (category) => {
+    const categoryNames = {
+      'normativo': 'Normativo',
+      'experto_consultancy': 'Consultoras',
+      'experto_institution': 'Instituciones',
+      'noticia': 'Noticias'
+    };
+    return categoryNames[category] || category;
+  };
+
+  const getDocumentTypeIcon = (type) => {
+    switch (type) {
+      case 'regulatory': return <FileText className="h-4 w-4" />;
+      case 'expert_document': return <PenTool className="h-4 w-4" />;
+      case 'news': return <Newspaper className="h-4 w-4" />;
+      default: return <BookOpen className="h-4 w-4" />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 max-w-6xl mx-auto">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Repositorio de Documentos</h1>
+        <p className="text-slate-600">
+          Base de conocimiento completa con documentos normativos, análisis de expertos y recursos especializados
+        </p>
+      </div>
+
+      {/* Stats */}
+      {stats && (
+        <div className="grid md:grid-cols-4 gap-4 mb-6">
+          <Card>
+            <CardContent className="p-4">
+              <div className="text-2xl font-bold text-blue-600">{stats.total_documents}</div>
+              <div className="text-sm text-slate-600">Total Documentos</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="text-2xl font-bold text-green-600">{stats.categories.normativo || 0}</div>
+              <div className="text-sm text-slate-600">Normativos</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="text-2xl font-bold text-purple-600">
+                {(stats.categories.experto_consultancy || 0) + (stats.categories.experto_institution || 0)}
+              </div>
+              <div className="text-sm text-slate-600">Documentos Expertos</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="text-2xl font-bold text-orange-600">{stats.categories.noticia || 0}</div>
+              <div className="text-sm text-slate-600">Noticias</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Search and Filters */}
+      <div className="mb-6 space-y-4">
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar documentos, análisis, papers..."
+                className="pl-10"
+                onKeyDown={(e) => e.key === 'Enter' && searchDocuments()}
+              />
+            </div>
+          </div>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Todas las categorías" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {getCategoryName(category)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button onClick={searchDocuments}>
+            <Search className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Documents Grid */}
+      <div className="space-y-4">
+        {documents.map((doc) => (
+          <Card key={doc.id} className="hover:shadow-md transition-shadow">
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-lg mb-2 leading-tight">
+                    {doc.title}
+                  </CardTitle>
+                  <div className="flex items-center space-x-4 text-sm text-slate-500">
+                    <div className="flex items-center space-x-1">
+                      {getDocumentTypeIcon(doc.document_type)}
+                      <span>{doc.source}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>{new Date(doc.publication_date).toLocaleDateString('es-ES')}</span>
+                    </div>
+                    <Badge variant="outline">
+                      {getCategoryName(doc.category)}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Badge 
+                    variant={doc.relevance_score > 8 ? "default" : "secondary"}
+                    className="ml-2"
+                  >
+                    {doc.relevance_score?.toFixed(1) || 'N/A'}
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-700 mb-4 leading-relaxed">
+                {doc.summary_es}
+              </p>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex flex-wrap gap-1">
+                  {doc.keywords.split(',').slice(0, 4).map((keyword, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {keyword.trim()}
+                    </Badge>
+                  ))}
+                </div>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => window.open(doc.url, '_blank')}
+                >
+                  Ver Documento
+                  <ArrowRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {documents.length === 0 && !loading && (
+        <div className="text-center py-12">
+          <BookOpen className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+          <div className="text-slate-500 text-lg">No se encontraron documentos</div>
+          <div className="text-slate-400 text-sm">Intenta ajustar los filtros de búsqueda</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Documents Component
 const DocumentsComponent = () => {
   const [searchQuery, setSearchQuery] = useState('');
