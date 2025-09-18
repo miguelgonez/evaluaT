@@ -2002,7 +2002,7 @@ const RepositoryComponent = () => {
     }
   };
 
-  if (loading) {
+  if (repositoryLoading) {
     return (
       <div className="p-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-center h-64">
