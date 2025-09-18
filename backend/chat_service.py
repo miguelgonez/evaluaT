@@ -244,7 +244,7 @@ INSTRUCCIONES IMPORTANTES:
                     "session_id": session_id,
                     "user_id": user_id,
                     "role": "assistant",
-                    "content": ai_response,
+                    "content": cleaned_ai_response,  # Using cleaned response
                     "created_at": current_time,
                     "metadata": {
                         "model": "gpt-4o-mini",
