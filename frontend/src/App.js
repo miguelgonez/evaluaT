@@ -1993,9 +1993,8 @@ const DocumentsComponent = () => {
       )}
 
       {/* Available Documents */}
-      {true && (
-        <div className="mt-12">
-          <h2 className="text-xl font-semibold text-slate-900 mb-6">Documentos Disponibles</h2>
+      <div className="mt-12">
+        <h2 className="text-xl font-semibold text-slate-900 mb-6">Documentos Disponibles</h2>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="border-blue-200 bg-blue-50">
