@@ -2683,6 +2683,9 @@ const MainDashboard = () => {
       case 'docs':
         return <DocumentsComponent />;
         
+      case 'repository':
+        return <RepositoryComponent />;
+        
       case 'timeline':
         return <TimelineComponent />;
         
