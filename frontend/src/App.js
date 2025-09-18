@@ -2337,7 +2337,7 @@ const MainDashboard = () => {
 const AssessmentComponent = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [assessmentLoading, setAssessmentLoading] = useState(false);
   const [result, setResult] = useState(null);
 
   const questions = [
