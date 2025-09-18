@@ -2218,6 +2218,7 @@ const MainDashboard = () => {
   };
 
   const renderContent = () => {
+    console.log('renderContent called with activeTab:', activeTab);
     switch (activeTab) {
       case 'dashboard':
         return (
