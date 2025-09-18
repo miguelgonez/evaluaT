@@ -2700,7 +2700,7 @@ const MainDashboard = () => {
       default:
         return <div>Contenido no encontrado</div>;
     }
-  };
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
