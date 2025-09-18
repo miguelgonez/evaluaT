@@ -819,19 +819,19 @@ const NewsComponent = () => {
       return;
     }
 
-    setLoading(true);
+    setNewsLoading(true);
     try {
       const response = await axios.get(`${API}/news/tags/${tag}`);
       setNews(response.data.news);
     } catch (error) {
       console.error('Error filtering news:', error);
     } finally {
-      setLoading(false);
+      setNewsLoading(false);
     }
   };
 
   const refreshNews = async () => {
-    setLoading(true);
+    setNewsLoading(true);
     try {
       await axios.post(`${API}/news/refresh`);
       await fetchNews();
