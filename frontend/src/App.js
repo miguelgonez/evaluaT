@@ -92,7 +92,7 @@ const AuthProvider = ({ children }) => {
     delete axios.defaults.headers.common['Authorization'];
   };
 
-  console.log('AuthProvider render - User:', user, 'Loading:', loading);
+  console.log('AuthProvider render - User:', user, 'Loading:', authLoading);
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, loading }}>
