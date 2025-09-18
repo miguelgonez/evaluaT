@@ -149,23 +149,25 @@ INSTRUCCIONES IMPORTANTES:
             # Build context from relevant documents
             context = ""
             if relevant_docs:
-                context = "\n\n**DOCUMENTACIÓN RELEVANTE:**\n"
+                context = "\n\nDOCUMENTACION RELEVANTE:\n"
                 for i, doc in enumerate(relevant_docs[:3], 1):
-                    context += f"\n{i}. **{doc['metadata'].get('title', 'Documento')}** (Categoría: {doc['metadata'].get('category', 'N/A')}):\n"
+                    context += f"\n{i}. {doc['metadata'].get('title', 'Documento')} (Categoría: {doc['metadata'].get('category', 'N/A')}):\n"
                     context += f"{doc['content'][:500]}...\n"
             
             # Create enhanced prompt with context (reduce cost by limiting context)
             enhanced_message = f"""
-**CONSULTA DEL USUARIO:**
+CONSULTA DEL USUARIO:
 {message}
 
 {context[:1000] if context else ""}
 
-**INSTRUCCIONES:**
+INSTRUCCIONES:
 - Responde de forma concisa y específica para startups de salud digital e insurtech
 - Si no tienes información suficiente en el contexto, indícalo
 - Menciona artículos específicos si son relevantes
 - Responde en español
+- NO uses formato markdown (sin *, #, -, etc.)
+- Usa texto plano con numeración simple
 """
 
             # Initialize LLM chat for this session with cheaper model temporarily
