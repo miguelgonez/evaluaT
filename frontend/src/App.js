@@ -2081,6 +2081,16 @@ const MainDashboard = () => {
   const [stats, setStats] = useState(null);
   const [assessments, setAssessments] = useState([]);
   const [dashboardLoading, setDashboardLoading] = useState(true);
+  
+  // Check if we're in demo mode
+  const isDemo = window.location.pathname === '/demo';
+  
+  // Create demo user if needed
+  const currentUser = isDemo ? {
+    company_name: 'Empresa Demo',
+    company_type: 'insurtech',
+    email: 'demo@empresa.com'
+  } : user;
 
   useEffect(() => {
     if (activeTab === 'dashboard') {
