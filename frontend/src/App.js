@@ -2568,7 +2568,7 @@ const AssessmentComponent = () => {
     );
   }
 
-  if (loading) {
+  if (assessmentLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
