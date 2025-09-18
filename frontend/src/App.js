@@ -516,7 +516,10 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => {
+                  console.log('Sidebar clicked:', item.id);
+                  setActiveTab(item.id);
+                }}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
                   activeTab === item.id 
                     ? 'bg-blue-50 text-blue-700 border border-blue-200' 
