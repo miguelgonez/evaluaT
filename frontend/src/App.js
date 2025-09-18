@@ -1966,7 +1966,7 @@ const RepositoryComponent = () => {
     } catch (error) {
       console.error('Error fetching repository data:', error);
     } finally {
-      setLoading(false);
+      setRepositoryLoading(false);
     }
   };
 
