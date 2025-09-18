@@ -95,7 +95,7 @@ const AuthProvider = ({ children }) => {
   console.log('AuthProvider render - User:', user, 'Loading:', authLoading);
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading: authLoading }}>
       {children}
     </AuthContext.Provider>
   );
