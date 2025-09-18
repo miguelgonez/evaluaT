@@ -2099,6 +2099,32 @@ const MainDashboard = () => {
   }, [activeTab]);
 
   const fetchDashboardData = async () => {
+    // If demo mode, use mock data
+    if (isDemo) {
+      setStats({
+        total_assessments: 3,
+        average_risk_score: 6.2,
+        compliance_status: 'partially_compliant',
+        recommendations_count: 8
+      });
+      setAssessments([
+        {
+          id: 'demo-1',
+          created_at: new Date().toISOString(),
+          risk_score: 6.2,
+          risk_level: 'medium'
+        },
+        {
+          id: 'demo-2', 
+          created_at: new Date(Date.now() - 86400000).toISOString(),
+          risk_score: 7.8,
+          risk_level: 'high'
+        }
+      ]);
+      setDashboardLoading(false);
+      return;
+    }
+    
     try {
       const [statsResponse, assessmentsResponse] = await Promise.all([
         axios.get(`${API}/dashboard/stats`),
