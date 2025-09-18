@@ -181,6 +181,9 @@ INSTRUCCIONES IMPORTANTES:
             # Get AI response
             ai_response = await chat.send_message(user_message)
             
+            # Clean markdown from AI response
+            cleaned_ai_response = self.clean_markdown_response(ai_response)
+            
             # Save user message
             user_msg_for_db = {
                 "id": str(uuid.uuid4()),
@@ -196,13 +199,13 @@ INSTRUCCIONES IMPORTANTES:
             
             await self.db.chat_messages.insert_one(user_msg_for_db)
             
-            # Save AI response
+            # Save AI response (cleaned)
             ai_msg_for_db = {
                 "id": str(uuid.uuid4()),
                 "session_id": session_id,
                 "user_id": user_id,
                 "role": "assistant",
-                "content": ai_response,
+                "content": cleaned_ai_response,  # Using cleaned response
                 "created_at": datetime.now(timezone.utc),
                 "metadata": {
                     "model": "gpt-4o-mini",
