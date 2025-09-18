@@ -615,6 +615,33 @@ const ChatComponent = () => {
     if (!newMessage.trim() || !currentSession) return;
 
     setChatLoading(true);
+    
+    if (isDemo) {
+      // Demo response
+      const userMessage = {
+        id: Date.now().toString(),
+        message: newMessage,
+        is_user: true,
+        timestamp: new Date().toISOString()
+      };
+      
+      const aiMessage = {
+        id: (Date.now() + 1).toString(),
+        message: 'Esta es una respuesta de demostración. En el modo real, el sistema RAG buscaría en la base de conocimientos de normativas y proporcionaría respuestas específicas basadas en el EU AI Act, GDPR, MDR y otras regulaciones relevantes.',
+        is_user: false,
+        timestamp: new Date().toISOString(),
+        ai_response: {
+          content: 'Respuesta de demostración del sistema RAG',
+          model: 'demo-mode'
+        }
+      };
+      
+      setMessages(prev => [...prev, userMessage, aiMessage]);
+      setNewMessage('');
+      setChatLoading(false);
+      return;
+    }
+    
     try {
       const response = await axios.post(`${API}/chat/sessions/${currentSession}/messages`, {
         message: newMessage,
