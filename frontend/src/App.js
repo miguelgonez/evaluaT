@@ -544,9 +544,40 @@ const ChatComponent = () => {
   const [chatLoading, setChatLoading] = useState(false);
   const [category, setCategory] = useState('all');
 
+  const isDemo = window.location.pathname === '/demo';
+
   useEffect(() => {
-    fetchSessions();
-  }, []);
+    if (isDemo) {
+      // Demo data for chat
+      const demoSession = {
+        id: 'demo-session',
+        title: 'Consulta sobre EU AI Act',
+        created_at: new Date().toISOString()
+      };
+      setSessions([demoSession]);
+      setCurrentSession('demo-session');
+      setMessages([
+        {
+          id: '1',
+          message: '¿Qué requisitos tiene el EU AI Act para sistemas de IA de alto riesgo?',
+          is_user: true,
+          timestamp: new Date(Date.now() - 60000).toISOString()
+        },
+        {
+          id: '2',
+          message: 'El EU AI Act establece varios requisitos clave para sistemas de IA de alto riesgo:\n\n1. **Sistema de gestión de riesgos**: Implementar un proceso continuo de identificación y mitigación de riesgos.\n\n2. **Gestión de datos**: Garantizar conjuntos de datos de alta calidad, relevantes y representativos.\n\n3. **Documentación técnica**: Mantener documentación detallada del sistema y sus capacidades.\n\n4. **Transparencia**: Proporcionar información clara sobre el funcionamiento del sistema.\n\n5. **Supervisión humana**: Asegurar supervisión humana efectiva durante el uso del sistema.',
+          is_user: false,
+          timestamp: new Date(Date.now() - 30000).toISOString(),
+          ai_response: {
+            content: 'El EU AI Act establece varios requisitos clave para sistemas de IA de alto riesgo...',
+            model: 'gpt-4o-mini'
+          }
+        }
+      ]);
+    } else {
+      fetchSessions();
+    }
+  }, [isDemo]);
 
   const fetchSessions = async () => {
     try {
