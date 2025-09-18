@@ -1878,7 +1878,7 @@ Pueden clasificarse como **alto riesgo** bajo el Anexo III del AI Act.
 // Repository Component
 const RepositoryComponent = () => {
   const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [repositoryLoading, setRepositoryLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [categories, setCategories] = useState([]);
