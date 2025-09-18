@@ -469,8 +469,8 @@ const AuthComponent = () => {
               </>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Procesando...' : (isLogin ? 'Iniciar Sesión' : 'Crear Cuenta')}
+            <Button type="submit" className="w-full" disabled={authFormLoading}>
+              {authFormLoading ? 'Procesando...' : (isLogin ? 'Iniciar Sesión' : 'Crear Cuenta')}
             </Button>
           </form>
 
