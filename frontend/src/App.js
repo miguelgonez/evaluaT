@@ -1290,6 +1290,7 @@ const TimelineComponent = () => {
       )}
     </div>
   );
+};
 
 // Articles Component
 const ArticlesComponent = () => {
