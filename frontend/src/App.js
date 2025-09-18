@@ -2450,14 +2450,14 @@ const AssessmentComponent = () => {
   };
 
   const submitAssessment = async () => {
-    setLoading(true);
+    setAssessmentLoading(true);
     try {
       const response = await axios.post(`${API}/assessments`, { responses });
       setResult(response.data);
     } catch (error) {
       console.error('Error submitting assessment:', error);
     } finally {
-      setLoading(false);
+      setAssessmentLoading(false);
     }
   };
 
