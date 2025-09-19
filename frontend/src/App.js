@@ -3667,8 +3667,8 @@ const AssessmentComponent = () => {
                 // Generate comprehensive PDF report
                 const reportData = {
                   evaluation_date: new Date().toLocaleDateString('es-ES'),
-                  company_name: currentUser?.company_name || 'Empresa Demo',
-                  company_type: currentUser?.company_type || 'insurtech',
+                  company_name: 'Empresa Demo',
+                  company_type: 'insurtech',
                   risk_level: result.risk_level,
                   risk_score: result.risk_score,
                   recommendations: result.recommendations || [],
