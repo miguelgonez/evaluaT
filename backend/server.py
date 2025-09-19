@@ -688,6 +688,174 @@ async def get_repository_stats(credentials: HTTPAuthorizationCredentials = Depen
         logger.error(f"Repository stats error: {str(e)}")
         raise HTTPException(status_code=500, detail="Error retrieving repository stats")
 
+# =============================================================================
+# ICU-VESOS ROUTES (Proyecto FENIX Integration)
+# =============================================================================
+
+@app.post("/api/vesos/analyze")
+async def analyze_project_vesos(
+    vesos_input: VESOSInputModel,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Analizar proyecto usando metodología ICU-VESOS"""
+    try:
+        # Verificar token
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("user_id")
+        
+        # Convertir a formato interno
+        vesos_data = VESOSInput(
+            project_id=str(uuid.uuid4()),
+            **vesos_input.dict()
+        )
+        
+        # Realizar análisis VESOS
+        vesos_service = get_icu_vesos_service(client)
+        analysis_result = vesos_service.calculate_vesos_score(vesos_data)
+        
+        # Guardar análisis
+        analysis_id = await vesos_service.save_vesos_analysis(analysis_result, vesos_data)
+        
+        return {
+            "analysis_id": analysis_id,
+            "vesos_score": analysis_result.vesos_score,
+            "recommendation": analysis_result.recommendation,
+            "risk_level": analysis_result.risk_level,
+            "compliance_score": analysis_result.compliance_score,
+            "confidence_interval": analysis_result.confidence_interval.dict(),
+            "detailed_analysis": analysis_result.detailed_analysis,
+            "next_steps": analysis_result.next_steps
+        }
+        
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        logger.error(f"VESOS analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error performing VESOS analysis")
+
+@app.get("/api/vesos/analyses")
+async def get_vesos_analyses(
+    organization: str = None,
+    sector: str = None,
+    limit: int = 20,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Obtener análisis VESOS guardados"""
+    try:
+        # Verificar token
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        
+        vesos_service = get_icu_vesos_service(client)
+        analyses = await vesos_service.get_vesos_analyses(organization, sector, limit)
+        
+        return {"analyses": analyses}
+        
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        logger.error(f"Get VESOS analyses error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error retrieving VESOS analyses")
+
+@app.get("/api/vesos/compliance-requirements/{sector}")
+async def get_compliance_requirements(
+    sector: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Obtener requisitos de compliance por sector"""
+    try:
+        # Verificar token
+        token = credentials.credentials
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        
+        requirements = {
+            "digital_health": [
+                {
+                    "name": "AI Act",
+                    "description": "Reglamento de IA de la UE - Clasificación de riesgos y requisitos",
+                    "priority": "high",
+                    "deadline": "2025-08-02"
+                },
+                {
+                    "name": "MDR",
+                    "description": "Reglamento de Dispositivos Médicos",
+                    "priority": "high",
+                    "deadline": "ongoing"
+                },
+                {
+                    "name": "GDPR/LOPDGDD",
+                    "description": "Protección de datos personales",
+                    "priority": "high",
+                    "deadline": "ongoing"
+                },
+                {
+                    "name": "EHDS",
+                    "description": "Espacio Europeo de Datos de Salud",
+                    "priority": "medium",
+                    "deadline": "2025-12-31"
+                },
+                {
+                    "name": "NIS2",
+                    "description": "Directiva de Ciberseguridad",
+                    "priority": "medium",
+                    "deadline": "2024-10-17"
+                },
+                {
+                    "name": "ISO 13485",
+                    "description": "Gestión de calidad para dispositivos médicos",
+                    "priority": "medium",
+                    "deadline": "ongoing"
+                }
+            ],
+            "insurtech": [
+                {
+                    "name": "AI Act",
+                    "description": "Reglamento de IA de la UE - Sistemas de alto riesgo en seguros",
+                    "priority": "high",
+                    "deadline": "2025-08-02"
+                },
+                {
+                    "name": "GDPR/LOPDGDD",
+                    "description": "Protección de datos personales",
+                    "priority": "high",
+                    "deadline": "ongoing"
+                },
+                {
+                    "name": "Solvencia II",
+                    "description": "Marco regulatorio de seguros",
+                    "priority": "high",
+                    "deadline": "ongoing"
+                },
+                {
+                    "name": "Ley del Contrato de Seguro",
+                    "description": "Regulación de contratos de seguro",
+                    "priority": "medium",
+                    "deadline": "ongoing"
+                },
+                {
+                    "name": "NIS2",
+                    "description": "Directiva de Ciberseguridad",
+                    "priority": "medium",
+                    "deadline": "2024-10-17"
+                }
+            ]
+        }
+        
+        sector_requirements = requirements.get(sector, [])
+        
+        return {
+            "sector": sector,
+            "requirements": sector_requirements,
+            "total_count": len(sector_requirements)
+        }
+        
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        logger.error(f"Get compliance requirements error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error retrieving compliance requirements")
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize services on startup"""
