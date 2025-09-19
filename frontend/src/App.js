@@ -496,6 +496,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'assessment', label: 'Autoevaluación', icon: FileText },
+    { id: 'vesos', label: 'Análisis VESOS', icon: Calculator },
     { id: 'chat', label: 'Chat Inteligente', icon: MessageCircle },
     { id: 'news', label: 'Noticias', icon: Newspaper },
     { id: 'articles', label: 'Artículos Técnicos', icon: PenTool },
