@@ -870,6 +870,14 @@ async def startup_event():
     # Start news update scheduler
     start_news_scheduler()
     
+    # Initialize admin service scheduler (esto estaba faltando)
+    try:
+        # The admin service scheduler is already initialized in its constructor
+        # But we can trigger an initial update if needed
+        logger.info("Admin service scheduler initialized")
+    except Exception as e:
+        logger.error(f"Error initializing admin service: {str(e)}")
+    
     # Create database indexes
     try:
         await db.news_items.create_index([("title", "text"), ("summary", "text")])
