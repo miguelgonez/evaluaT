@@ -3603,10 +3603,22 @@ const AssessmentComponent = () => {
                 Nueva Evaluación
               </Button>
               <Button variant="outline" onClick={() => {
-                // Generate report functionality would go here
-                alert('Funcionalidad de reporte próximamente');
+                // Generate comprehensive PDF report
+                const reportData = {
+                  evaluation_date: new Date().toLocaleDateString('es-ES'),
+                  company_name: currentUser?.company_name || 'Empresa Demo',
+                  company_type: currentUser?.company_type || 'insurtech',
+                  risk_level: result.risk_level,
+                  risk_score: result.risk_score,
+                  recommendations: result.recommendations || [],
+                  total_questions: questions.length,
+                  responses_count: Object.keys(responses).length
+                };
+                
+                // Create and download PDF report
+                generatePDFReport(reportData);
               }}>
-                Generar Reporte
+                Generar Reporte PDF
               </Button>
             </div>
           </CardContent>
