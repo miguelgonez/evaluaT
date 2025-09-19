@@ -3308,6 +3308,9 @@ const MainDashboard = () => {
       case 'assessment':
         return <AssessmentComponent />;
         
+      case 'vesos':
+        return <VESOSComponent />;
+        
       case 'chat':
         return <ChatComponent />;
         
