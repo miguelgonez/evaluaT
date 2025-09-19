@@ -113,6 +113,35 @@ class DocumentMetadata(BaseModel):
     category: str
     relevance_score: float
 
+# ICU-VESOS models
+class FeasibilityFactorsModel(BaseModel):
+    technological_maturity: float = Field(ge=0, le=10)
+    budget_availability: float = Field(ge=0, le=10)
+    team_competence: float = Field(ge=0, le=10)
+    regulatory_clarity: float = Field(ge=0, le=10)
+
+class UtilityIndicatorsModel(BaseModel):
+    technical_utility: float = Field(ge=0, le=10)
+    aspirational_utility: float = Field(ge=0, le=10)
+
+class RiskAssessmentModel(BaseModel):
+    probability: float = Field(ge=0, le=1)
+    impact: float = Field(ge=0, le=10)
+    mitigation_measures: List[str] = []
+
+class VESOSInputModel(BaseModel):
+    project_name: str
+    organization: str
+    sector: str  # "digital_health" or "insurtech"
+    utility: UtilityIndicatorsModel
+    feasibility: FeasibilityFactorsModel
+    cost: float = Field(gt=0)
+    risks: List[RiskAssessmentModel]
+    time_months: float = Field(gt=0)
+    problem_statement: str
+    expected_users: int
+    compliance_requirements: List[str] = []
+
 # Helper functions
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
