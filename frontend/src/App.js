@@ -229,15 +229,15 @@ const LandingPage = () => {
 
               <div className="flex items-center space-x-8 pt-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">2+</div>
+                  <div className="text-2xl font-bold text-slate-900">{stats.evaluatedStartups}</div>
                   <div className="text-sm text-slate-600">Startups Evaluadas</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">99%</div>
+                  <div className="text-2xl font-bold text-slate-900">{stats.successRate}</div>
                   <div className="text-sm text-slate-600">Precisión</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">24h</div>
+                  <div className="text-2xl font-bold text-slate-900">{stats.avgTime}</div>
                   <div className="text-sm text-slate-600">Reporte Listo</div>
                 </div>
               </div>
