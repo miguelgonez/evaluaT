@@ -113,20 +113,15 @@ const LandingPage = () => {
   });
 
   useEffect(() => {
-    // Fetch real statistics in production
+    // Fetch real statistics
     const fetchStats = async () => {
       try {
-        // In demo mode, use static data
-        const isDemo = true; // This would be determined by environment
-        
-        if (!isDemo) {
-          const response = await axios.get(`${API}/public/stats`);
-          setStats({
-            evaluatedStartups: `${response.data.total_assessments}+`,
-            successRate: `${Math.round(response.data.success_rate)}%`,
-            avgTime: `${response.data.avg_time_hours}h`
-          });
-        }
+        const response = await axios.get(`${API}/public/stats`);
+        setStats({
+          evaluatedStartups: `${response.data.unique_companies}+`,
+          successRate: `${Math.round(response.data.success_rate)}%`,
+          avgTime: `${response.data.avg_time_hours}h`
+        });
       } catch (error) {
         console.error('Error fetching stats:', error);
         // Keep default values
