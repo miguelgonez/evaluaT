@@ -19,6 +19,7 @@ from document_manager import document_manager, initialize_documents, start_sched
 from chat_service import ChatService
 from news_service import NewsService, start_news_scheduler
 from admin_service import admin_service
+from icu_vesos_service import get_icu_vesos_service, VESOSInput, VESOSResult
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
