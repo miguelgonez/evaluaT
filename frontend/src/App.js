@@ -1878,6 +1878,634 @@ Pueden clasificarse como **alto riesgo** bajo el Anexo III del AI Act.
   );
 };
 
+// ICU-VESOS Component - Análisis de proyectos usando metodología VESOS
+const VESOSComponent = () => {
+  const [activeSubTab, setActiveSubTab] = useState('new');
+  const [analysisForm, setAnalysisForm] = useState({
+    project_name: '',
+    organization: '',
+    sector: 'digital_health',
+    problem_statement: '',
+    expected_users: 100,
+    cost: 50000,
+    time_months: 6,
+    utility: {
+      technical_utility: 5,
+      aspirational_utility: 5
+    },
+    feasibility: {
+      technological_maturity: 5,
+      budget_availability: 5,
+      team_competence: 5,
+      regulatory_clarity: 5
+    },
+    risks: [{
+      probability: 0.3,
+      impact: 5,
+      mitigation_measures: []
+    }],
+    compliance_requirements: []
+  });
+  
+  const [analysis, setAnalysis] = useState(null);
+  const [analyses, setAnalyses] = useState([]);
+  const [loading, setVesosLoading] = useState(false);
+  const [complianceRequirements, setComplianceRequirements] = useState([]);
+
+  const isDemo = window.location.pathname === '/demo';
+
+  useEffect(() => {
+    if (isDemo) {
+      // Demo data
+      setAnalyses([
+        {
+          id: 'demo-1',
+          project_name: 'Sistema de Teledermatología con IA',
+          organization: 'HealthTech Demo',
+          sector: 'digital_health',
+          vesos_score: 1.45,
+          recommendation: 'ESCALAR',
+          risk_level: 'MEDIUM',
+          compliance_score: 8.5,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'demo-2',
+          project_name: 'Chatbot de Seguros Inteligente',
+          organization: 'InsurTech Demo',
+          sector: 'insurtech',
+          vesos_score: 0.75,
+          recommendation: 'ITERAR',
+          risk_level: 'LOW',
+          compliance_score: 7.2,
+          created_at: new Date(Date.now() - 86400000).toISOString()
+        }
+      ]);
+      
+      setComplianceRequirements([
+        { name: 'AI Act', priority: 'high', deadline: '2025-08-02' },
+        { name: 'MDR', priority: 'high', deadline: 'ongoing' },
+        { name: 'GDPR/LOPDGDD', priority: 'high', deadline: 'ongoing' }
+      ]);
+    } else {
+      fetchAnalyses();
+      fetchComplianceRequirements();
+    }
+  }, [isDemo, analysisForm.sector]);
+
+  const fetchAnalyses = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/vesos/analyses`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setAnalyses(response.data.analyses);
+    } catch (error) {
+      console.error('Error fetching VESOS analyses:', error);
+    }
+  };
+
+  const fetchComplianceRequirements = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API}/vesos/compliance-requirements/${analysisForm.sector}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setComplianceRequirements(response.data.requirements);
+    } catch (error) {
+      console.error('Error fetching compliance requirements:', error);
+    }
+  };
+
+  const submitAnalysis = async () => {
+    if (isDemo) {
+      setVesosLoading(true);
+      setTimeout(() => {
+        const demoResult = {
+          analysis_id: 'demo-analysis',
+          vesos_score: 1.23,
+          recommendation: 'ESCALAR',
+          risk_level: 'MEDIUM',
+          compliance_score: 8.2,
+          confidence_interval: { lower_bound: 1.15, upper_bound: 1.31 },
+          detailed_analysis: {
+            utility_score: 6.5,
+            feasibility_score: 7.2,
+            risk_score: 4.1,
+            compliance_score: 8.2,
+            sector_specific_analysis: {
+              key_regulations: ['AI Act', 'MDR', 'GDPR'],
+              critical_factors: ['Seguridad del paciente', 'Interoperabilidad']
+            }
+          },
+          next_steps: [
+            'Proceder con implementación completa',
+            'Asegurar presupuesto y recursos',
+            'Establecer métricas de seguimiento'
+          ]
+        };
+        setAnalysis(demoResult);
+        setVesosLoading(false);
+      }, 3000);
+      return;
+    }
+
+    setVesosLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${API}/vesos/analyze`, analysisForm, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setAnalysis(response.data);
+      fetchAnalyses(); // Refresh list
+    } catch (error) {
+      console.error('Error submitting VESOS analysis:', error);
+    } finally {
+      setVesosLoading(false);
+    }
+  };
+
+  const getRecommendationColor = (recommendation) => {
+    switch (recommendation) {
+      case 'ESCALAR': return 'text-green-600 bg-green-50';
+      case 'ITERAR': return 'text-yellow-600 bg-yellow-50';
+      case 'DETENER': return 'text-red-600 bg-red-50';
+      default: return 'text-gray-600 bg-gray-50';
+    }
+  };
+
+  const getRiskColor = (risk) => {
+    switch (risk) {
+      case 'LOW': return 'text-green-600 bg-green-50';
+      case 'MEDIUM': return 'text-yellow-600 bg-yellow-50';
+      case 'HIGH': return 'text-red-600 bg-red-50';
+      default: return 'text-gray-600 bg-gray-50';
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-6xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Análisis ICU-VESOS</h1>
+        <p className="text-slate-600">
+          Metodología de Innovación Conducida por la Utilidad - Evaluación y priorización de proyectos
+        </p>
+      </div>
+
+      {/* Sub-navigation */}
+      <div className="mb-6">
+        <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg">
+          <button
+            onClick={() => setActiveSubTab('new')}
+            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              activeSubTab === 'new' 
+                ? 'bg-white text-slate-900 shadow-sm' 
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Nuevo Análisis
+          </button>
+          <button
+            onClick={() => setActiveSubTab('results')}
+            className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              activeSubTab === 'results' 
+                ? 'bg-white text-slate-900 shadow-sm' 
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Análisis Previos
+          </button>
+        </div>
+      </div>
+
+      {/* New Analysis Tab */}
+      {activeSubTab === 'new' && (
+        <div className="space-y-6">
+          {/* Project Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Información del Proyecto</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="project_name">Nombre del Proyecto</Label>
+                  <Input
+                    id="project_name"
+                    value={analysisForm.project_name}
+                    onChange={(e) => setAnalysisForm({...analysisForm, project_name: e.target.value})}
+                    placeholder="ej: Sistema de IA para diagnóstico médico"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="organization">Organización</Label>
+                  <Input
+                    id="organization"
+                    value={analysisForm.organization}
+                    onChange={(e) => setAnalysisForm({...analysisForm, organization: e.target.value})}
+                    placeholder="ej: MedTech Solutions"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="sector">Sector</Label>
+                  <Select 
+                    value={analysisForm.sector} 
+                    onValueChange={(value) => setAnalysisForm({...analysisForm, sector: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="digital_health">Salud Digital</SelectItem>
+                      <SelectItem value="insurtech">Insurtech</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="expected_users">Usuarios Esperados</Label>
+                  <Input
+                    id="expected_users"
+                    type="number"
+                    value={analysisForm.expected_users}
+                    onChange={(e) => setAnalysisForm({...analysisForm, expected_users: parseInt(e.target.value)})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="time_months">Tiempo (meses)</Label>
+                  <Input
+                    id="time_months"
+                    type="number"
+                    step="0.5"
+                    value={analysisForm.time_months}
+                    onChange={(e) => setAnalysisForm({...analysisForm, time_months: parseFloat(e.target.value)})}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="problem_statement">Declaración del Problema</Label>
+                <textarea
+                  id="problem_statement"
+                  value={analysisForm.problem_statement}
+                  onChange={(e) => setAnalysisForm({...analysisForm, problem_statement: e.target.value})}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-md"
+                  rows="3"
+                  placeholder="Describe el problema que el proyecto busca resolver..."
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="cost">Coste del Proyecto (€)</Label>
+                <Input
+                  id="cost"
+                  type="number"
+                  value={analysisForm.cost}
+                  onChange={(e) => setAnalysisForm({...analysisForm, cost: parseFloat(e.target.value)})}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Utility Assessment */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Evaluación de Utilidad</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label>Utilidad Técnica (UT): {analysisForm.utility.technical_utility}</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={analysisForm.utility.technical_utility}
+                    onChange={(e) => setAnalysisForm({
+                      ...analysisForm, 
+                      utility: {...analysisForm.utility, technical_utility: parseFloat(e.target.value)}
+                    })}
+                    className="w-full"
+                  />
+                  <div className="text-sm text-slate-500 mt-1">
+                    Valor técnico y funcional del proyecto
+                  </div>
+                </div>
+                <div>
+                  <Label>Utilidad Aspiracional (UA): {analysisForm.utility.aspirational_utility}</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={analysisForm.utility.aspirational_utility}
+                    onChange={(e) => setAnalysisForm({
+                      ...analysisForm, 
+                      utility: {...analysisForm.utility, aspirational_utility: parseFloat(e.target.value)}
+                    })}
+                    className="w-full"
+                  />
+                  <div className="text-sm text-slate-500 mt-1">
+                    Impacto en experiencia y satisfacción del usuario
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Feasibility Assessment */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Evaluación de Factibilidad</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label>Madurez Tecnológica: {analysisForm.feasibility.technological_maturity}</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={analysisForm.feasibility.technological_maturity}
+                    onChange={(e) => setAnalysisForm({
+                      ...analysisForm, 
+                      feasibility: {...analysisForm.feasibility, technological_maturity: parseFloat(e.target.value)}
+                    })}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label>Disponibilidad Presupuestaria: {analysisForm.feasibility.budget_availability}</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={analysisForm.feasibility.budget_availability}
+                    onChange={(e) => setAnalysisForm({
+                      ...analysisForm, 
+                      feasibility: {...analysisForm.feasibility, budget_availability: parseFloat(e.target.value)}
+                    })}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label>Competencia del Equipo: {analysisForm.feasibility.team_competence}</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={analysisForm.feasibility.team_competence}
+                    onChange={(e) => setAnalysisForm({
+                      ...analysisForm, 
+                      feasibility: {...analysisForm.feasibility, team_competence: parseFloat(e.target.value)}
+                    })}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label>Claridad Regulatoria: {analysisForm.feasibility.regulatory_clarity}</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={analysisForm.feasibility.regulatory_clarity}
+                    onChange={(e) => setAnalysisForm({
+                      ...analysisForm, 
+                      feasibility: {...analysisForm.feasibility, regulatory_clarity: parseFloat(e.target.value)}
+                    })}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Risk Assessment */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Evaluación de Riesgos</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label>Probabilidad: {analysisForm.risks[0].probability}</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={analysisForm.risks[0].probability}
+                    onChange={(e) => setAnalysisForm({
+                      ...analysisForm, 
+                      risks: [{...analysisForm.risks[0], probability: parseFloat(e.target.value)}]
+                    })}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label>Impacto: {analysisForm.risks[0].impact}</Label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={analysisForm.risks[0].impact}
+                    onChange={(e) => setAnalysisForm({
+                      ...analysisForm, 
+                      risks: [{...analysisForm.risks[0], impact: parseFloat(e.target.value)}]
+                    })}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Compliance Requirements */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Requisitos de Compliance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {complianceRequirements.map((req, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`req-${index}`}
+                      checked={analysisForm.compliance_requirements.includes(req.name)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setAnalysisForm({
+                            ...analysisForm,
+                            compliance_requirements: [...analysisForm.compliance_requirements, req.name]
+                          });
+                        } else {
+                          setAnalysisForm({
+                            ...analysisForm,
+                            compliance_requirements: analysisForm.compliance_requirements.filter(r => r !== req.name)
+                          });
+                        }
+                      }}
+                    />
+                    <label htmlFor={`req-${index}`} className="text-sm">
+                      {req.name}
+                      <Badge variant="outline" className={`ml-1 ${req.priority === 'high' ? 'text-red-600' : 'text-yellow-600'}`}>
+                        {req.priority}
+                      </Badge>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Submit Button */}
+          <div className="flex justify-center">
+            <Button 
+              onClick={submitAnalysis} 
+              disabled={loading || !analysisForm.project_name}
+              className="px-8 py-3"
+            >
+              {loading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Analizando...
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <Calculator className="h-4 w-4 mr-2" />
+                  Ejecutar Análisis VESOS
+                </div>
+              )}
+            </Button>
+          </div>
+
+          {/* Analysis Result */}
+          {analysis && (
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Resultado del Análisis VESOS</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* VESOS Score */}
+                <div className="text-center py-6 bg-slate-50 rounded-lg">
+                  <div className="text-4xl font-bold text-slate-900 mb-2">
+                    {analysis.vesos_score}
+                  </div>
+                  <div className="text-lg text-slate-600 mb-4">Puntuación VESOS</div>
+                  <Badge className={`text-lg px-4 py-2 ${getRecommendationColor(analysis.recommendation)}`}>
+                    {analysis.recommendation}
+                  </Badge>
+                </div>
+
+                {/* Key Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl font-bold text-blue-600">{analysis.compliance_score}%</div>
+                      <div className="text-sm text-slate-600">Compliance</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <Badge className={`${getRiskColor(analysis.risk_level)}`}>
+                        {analysis.risk_level}
+                      </Badge>
+                      <div className="text-sm text-slate-600 mt-1">Nivel de Riesgo</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4 text-center">
+                      <div className="text-sm text-slate-600">Intervalo de Confianza</div>
+                      <div className="text-lg font-medium">
+                        {analysis.confidence_interval?.lower_bound?.toFixed(2)} - {analysis.confidence_interval?.upper_bound?.toFixed(2)}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Next Steps */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Próximos Pasos Recomendados</h3>
+                  <ul className="space-y-2">
+                    {analysis.next_steps?.map((step, index) => (
+                      <li key={index} className="flex items-start">
+                        <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span className="text-slate-700">{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* Previous Analyses Tab */}
+      {activeSubTab === 'results' && (
+        <div>
+          <div className="space-y-4">
+            {analyses.map((analysis) => (
+              <Card key={analysis.id} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold">{analysis.project_name}</h3>
+                      <p className="text-slate-600">{analysis.organization} • {analysis.sector === 'digital_health' ? 'Salud Digital' : 'Insurtech'}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-slate-900">{analysis.vesos_score}</div>
+                      <Badge className={`${getRecommendationColor(analysis.recommendation)}`}>
+                        {analysis.recommendation}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <span className="text-slate-500">Compliance: </span>
+                      <span className="font-medium">{analysis.compliance_score}%</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">Riesgo: </span>
+                      <Badge variant="outline" className={getRiskColor(analysis.risk_level)}>
+                        {analysis.risk_level}
+                      </Badge>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">Fecha: </span>
+                      <span className="font-medium">
+                        {new Date(analysis.created_at).toLocaleDateString('es-ES')}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {analyses.length === 0 && (
+            <div className="text-center py-12">
+              <Calculator className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+              <div className="text-slate-500 text-lg">No hay análisis VESOS previos</div>
+              <div className="text-slate-400 text-sm">Crea tu primer análisis usando la pestaña "Nuevo Análisis"</div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Repository Component
 const RepositoryComponent = () => {
   const [documents, setDocuments] = useState([]);
