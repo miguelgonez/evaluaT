@@ -3387,6 +3387,67 @@ const AssessmentComponent = () => {
   const [assessmentLoading, setAssessmentLoading] = useState(false);
   const [result, setResult] = useState(null);
 
+  // Function to generate PDF report
+  const generatePDFReport = (reportData) => {
+    // Create HTML content for the report
+    const reportHTML = `
+      <html>
+        <head>
+          <title>Reporte de Evaluación AI Compliance</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; }
+            h1 { color: #1e40af; border-bottom: 2px solid #1e40af; padding-bottom: 10px; }
+            h2 { color: #374151; margin-top: 30px; }
+            .header { text-align: center; margin-bottom: 40px; }
+            .risk-level { padding: 10px; border-radius: 5px; font-weight: bold; text-align: center; margin: 20px 0; }
+            .risk-low { background-color: #dcfce7; color: #166534; }
+            .risk-limited { background-color: #fef3c7; color: #92400e; }
+            .risk-high { background-color: #fecaca; color: #991b1b; }
+            .risk-unacceptable { background-color: #dc2626; color: white; }
+            .recommendation { background-color: #f8fafc; padding: 15px; margin: 10px 0; border-left: 4px solid #3b82f6; }
+            .footer { margin-top: 40px; text-align: center; color: #6b7280; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Reporte de Evaluación AI Compliance</h1>
+            <p><strong>Fecha de Evaluación:</strong> ${reportData.evaluation_date}</p>
+            <p><strong>Empresa:</strong> ${reportData.company_name}</p>
+            <p><strong>Sector:</strong> ${reportData.company_type === 'digital_health' ? 'Salud Digital' : 'Insurtech'}</p>
+          </div>
+          
+          <h2>Resultado de la Evaluación</h2>
+          <div class="risk-level risk-${reportData.risk_level}">
+            Nivel de Riesgo: ${reportData.risk_level.toUpperCase()}
+          </div>
+          <p><strong>Puntuación de Riesgo:</strong> ${reportData.risk_score}/10</p>
+          <p><strong>Preguntas Respondidas:</strong> ${reportData.responses_count} de ${reportData.total_questions}</p>
+          
+          <h2>Recomendaciones</h2>
+          ${reportData.recommendations.map((rec, index) => 
+            `<div class="recommendation">${index + 1}. ${rec}</div>`
+          ).join('')}
+          
+          <div class="footer">
+            <p>Este reporte fue generado automáticamente por AI Compliance Pro</p>
+            <p>Para más información, visite: compliance.jurisia.es</p>
+          </div>
+        </body>
+      </html>
+    `;
+    
+    // Create and download the HTML report
+    const blob = new Blob([reportHTML], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `reporte-ai-compliance-${new Date().toISOString().split('T')[0]}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const questions = [
     {
       id: 'company_description',
