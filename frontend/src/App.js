@@ -200,7 +200,7 @@ const LandingPage = () => {
 
               <div className="flex items-center space-x-8 pt-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">500+</div>
+                  <div className="text-2xl font-bold text-slate-900">2+</div>
                   <div className="text-sm text-slate-600">Startups Evaluadas</div>
                 </div>
                 <div className="text-center">
