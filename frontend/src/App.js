@@ -106,6 +106,35 @@ const AuthProvider = ({ children }) => {
 
 // Landing Page Component
 const LandingPage = () => {
+  const [stats, setStats] = useState({
+    evaluatedStartups: '2+',
+    successRate: '99%',
+    avgTime: '24h'
+  });
+
+  useEffect(() => {
+    // Fetch real statistics in production
+    const fetchStats = async () => {
+      try {
+        // In demo mode, use static data
+        const isDemo = true; // This would be determined by environment
+        
+        if (!isDemo) {
+          const response = await axios.get(`${API}/public/stats`);
+          setStats({
+            evaluatedStartups: `${response.data.total_assessments}+`,
+            successRate: `${Math.round(response.data.success_rate)}%`,
+            avgTime: `${response.data.avg_time_hours}h`
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        // Keep default values
+      }
+    };
+    
+    fetchStats();
+  }, []);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
