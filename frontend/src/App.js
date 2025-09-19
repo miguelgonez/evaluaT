@@ -3184,6 +3184,14 @@ const MainDashboard = () => {
                       Artículos
                     </Button>
                     <Button onClick={() => {
+                      console.log('VESOS Analysis button clicked - setting activeTab to vesos');
+                      setActiveTab('vesos');
+                    }} variant="outline" className="h-20 flex-col">
+                      <Calculator className="h-6 w-6 mb-2" />
+                      Análisis VESOS
+                    </Button>
+
+                    <Button onClick={() => {
                       console.log('Documentos button clicked - setting activeTab to docs');
                       setActiveTab('docs');
                     }} variant="outline" className="h-20 flex-col">
