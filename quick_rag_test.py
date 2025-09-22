@@ -6,7 +6,7 @@ import time
 
 def test_rag_with_longer_timeout():
     """Test RAG system with longer timeout"""
-    base_url = "https://compliai-saas.preview.emergentagent.com/api"
+    base_url = "https://medregs-wizard.preview.emergentagent.com/api"
     
     print("🧠 Testing RAG System with Extended Timeout...")
     

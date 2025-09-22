@@ -6,7 +6,7 @@ import time
 
 def test_basic_endpoints():
     """Test basic endpoints that don't require RAG system"""
-    base_url = "https://compliai-saas.preview.emergentagent.com/api"
+    base_url = "https://medregs-wizard.preview.emergentagent.com/api"
     
     print("🔍 Testing Basic Backend Endpoints...")
     
@@ -79,7 +79,7 @@ def test_basic_endpoints():
 
 def test_rag_endpoints():
     """Test RAG system endpoints"""
-    base_url = "https://compliai-saas.preview.emergentagent.com/api"
+    base_url = "https://medregs-wizard.preview.emergentagent.com/api"
     
     print("\n🧠 Testing RAG System Endpoints...")
     
